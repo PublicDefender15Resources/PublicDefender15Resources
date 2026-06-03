@@ -2,1802 +2,1216 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#1a3557">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src * data: blob:; connect-src * data: blob:;">
-<meta name="description" content="Free community resources in Palm Beach County — shelter, food, health, and more.">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="PBC Resources">
-<title>Palm Beach County Resource Guide</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTLSeB68ARYJipY1SQ==" crossorigin="anonymous" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>PBC Resource Guide — Palm Beach County Public Defender</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWoFvYXgbggZo4zoAfPAFNANsfzHQ5HI4y8CWKMZ4GtkAe8lf7/4Q==" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Lora:ital,wght@0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html {
-    height: 100%;
-  }
-
   :root {
-    --navy: #1a3557;
-    --navy-light: #254a76;
-    --navy-dark: #0f2036;
-    --gold: #b8860b;
-    --gold-light: #d4a017;
-    --cream: #f8f4ed;
-    --cream-dark: #ede8df;
+    --navy: #1a3a5c;
+    --navy-light: #245080;
+    --teal: #2a8fa0;
+    --teal-light: #3cb8cc;
+    --gold: #e8a020;
+    --gold-light: #f5c054;
+    --cream: #fdf8f2;
     --white: #ffffff;
-    --text-primary: #1a2a3a;
-    --text-secondary: #4a5a6a;
-    --text-muted: #7a8a9a;
-    --border: #d0c8bc;
-    --shadow: rgba(26, 53, 87, 0.12);
-    --accent-blue: #2d6a9f;
-    --accent-teal: #1d7a6e;
-    --emergency: #c0392b;
-    --emergency-dark: #96281b;
-    --sidebar-width: 400px;
-    --sidebar-collapsed-width: 0px;
-    --sidebar-transition: width 0.28s cubic-bezier(0.4,0,0.2,1);
-    --bottom-nav-height: 0px;
+    --text: #1e2d3d;
+    --text-light: #4a6080;
+    --border: #d0dce8;
+    --green: #2e8b57;
+    --red: #c0392b;
+    --sidebar-w: 360px;
+    --bottom-bar-h: 64px;
+    --font-body: 'Nunito', sans-serif;
+    --font-display: 'Lora', serif;
+    --radius: 14px;
+    --shadow: 0 4px 20px rgba(26,58,92,0.12);
+    --shadow-lg: 0 8px 40px rgba(26,58,92,0.18);
   }
-
-  /* ── HIGH CONTRAST MODE ── */
-  body.hc {
-    --navy: #000000;
-    --navy-light: #222222;
-    --navy-dark: #000000;
-    --gold: #ffdd00;
-    --gold-light: #ffdd00;
-    --cream: #ffffff;
-    --cream-dark: #eeeeee;
-    --white: #ffffff;
-    --text-primary: #000000;
-    --text-secondary: #111111;
-    --text-muted: #333333;
-    --border: #000000;
-    --shadow: rgba(0,0,0,0.35);
-    --accent-blue: #0000cc;
-    --accent-teal: #005500;
-    --emergency: #cc0000;
-  }
-  body.hc .tag-housing    { background:#000080; color:#ffffff; }
-  body.hc .tag-mental     { background:#005500; color:#ffffff; }
-  body.hc .tag-substance  { background:#663300; color:#ffffff; }
-  body.hc .tag-medical    { background:#440044; color:#ffffff; }
-  body.hc .tag-employment { background:#004400; color:#ffffff; }
-  body.hc .tag-food       { background:#550000; color:#ffffff; }
-  body.hc .tag-reentry    { background:#222222; color:#ffffff; }
-  body.hc .tag-family     { background:#553300; color:#ffffff; }
-  body.hc .tag-education  { background:#000055; color:#ffffff; }
-  body.hc .tag-benefits   { background:#004422; color:#ffffff; }
-  body.hc .tag-other      { background:#444444; color:#ffffff; }
-  body.hc .filter-btn.active { background:#000000; border-color:#ffdd00; color:#ffdd00; }
-  body.hc .resource-card.selected { background:#e8e8ff; border-left-color:#0000cc; }
-  body.hc .custom-marker { background:#000000; border-color:#ffdd00; }
-  body.hc .leaflet-popup-content-wrapper { border-top-color:#000000; }
-
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: 'Nunito', 'Segoe UI', Arial, sans-serif;
+    font-family: var(--font-body);
     background: var(--cream);
-    color: var(--text-primary);
-    height: 100%;
-    min-height: 100vh;
+    color: var(--text);
+    height: 100dvh;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    font-size: 16px;
   }
 
-  /* Header */
-  header {
+  /* ── TOP BAR ── */
+  #topbar {
     background: var(--navy);
-    color: var(--white);
-    padding: 0 24px;
-    height: 68px;
+    color: white;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    padding: 0 16px;
+    height: 56px;
+    gap: 12px;
     flex-shrink: 0;
-    border-bottom: 3px solid var(--gold);
-    box-shadow: 0 2px 8px var(--shadow);
     z-index: 1000;
+    position: relative;
   }
-
-  .header-left {
-    display: flex;
-    align-items: center;
-    gap: 14px;
+  #topbar .logo {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: white;
+    line-height: 1.2;
   }
-
-  .header-badge {
+  #topbar .logo span { color: var(--gold-light); display: block; font-size: 0.75rem; font-family: var(--font-body); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+  #topbar .badge {
+    margin-left: auto;
     background: var(--gold);
-    color: var(--navy-dark);
-    font-size: 12px;
+    color: var(--navy);
+    font-size: 0.7rem;
     font-weight: 800;
-    font-family: 'Nunito', sans-serif;
-    letter-spacing: 0.8px;
-    padding: 4px 10px;
-    border-radius: 3px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
   }
 
-  .header-title {
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-  }
-
-  .header-title span {
-    color: var(--gold-light);
-    font-style: italic;
-  }
-
-  .header-subtitle {
-    font-size: 13px;
-    color: rgba(255,255,255,0.65);
-    font-weight: 400;
-    letter-spacing: 0.2px;
-  }
-
-  .resource-count-badge {
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.25);
-    color: rgba(255,255,255,0.9);
-    font-size: 13px;
-    padding: 5px 14px;
-    border-radius: 20px;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 600;
-  }
-
-  /* Layout */
-  .app-body {
+  /* ── LAYOUT ── */
+  #layout {
     display: flex;
     flex: 1;
     overflow: hidden;
-    height: calc(100vh - 68px);
-    min-height: 0;
+    position: relative;
   }
 
-  /* Sidebar */
-  .sidebar {
-    width: var(--sidebar-width);
+  /* ── SIDEBAR ── */
+  #sidebar {
+    width: var(--sidebar-w);
     background: var(--white);
     border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
+    transition: width 0.3s ease, transform 0.3s ease;
     overflow: hidden;
-    box-shadow: 2px 0 8px var(--shadow);
-    transition: var(--sidebar-transition);
-    position: relative;
+    z-index: 100;
   }
+  #sidebar.collapsed { width: 48px; }
+  #sidebar.collapsed .sidebar-content { opacity: 0; pointer-events: none; }
 
-  .sidebar.collapsed {
-    width: 0;
-    border-right: none;
-  }
-
-  /* Sidebar toggle button - floats on the map edge */
   .sidebar-toggle {
     position: absolute;
     top: 50%;
-    right: -18px;
+    right: -14px;
     transform: translateY(-50%);
-    z-index: 500;
-    width: 36px;
-    height: 56px;
+    width: 28px; height: 28px;
     background: var(--navy);
-    color: white;
     border: none;
-    border-radius: 0 8px 8px 0;
+    border-radius: 50%;
+    color: white;
     cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    z-index: 200;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transition: right 0.3s;
+  }
+  #sidebar.collapsed .sidebar-toggle { right: -14px; }
+  #sidebar-wrap { position: relative; display: flex; }
+
+  .sidebar-content {
+    flex: 1;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    box-shadow: 2px 0 8px var(--shadow);
-    transition: background 0.15s, right 0.28s cubic-bezier(0.4,0,0.2,1);
-    flex-shrink: 0;
-    touch-action: manipulation;
+    flex-direction: column;
+    overflow: hidden;
+    transition: opacity 0.2s;
   }
 
-  .sidebar-toggle:hover { background: var(--navy-light); }
-
-  .sidebar-toggle .toggle-arrow {
-    display: inline-block;
-    transition: transform 0.28s ease;
-    line-height: 1;
-    font-style: normal;
-  }
-
-  .sidebar.collapsed .sidebar-toggle {
-    right: -36px;
-  }
-
-  .sidebar.collapsed .sidebar-toggle .toggle-arrow {
-    transform: rotate(180deg);
-  }
-
-  /* Mobile: sidebar is a slide-up drawer */
-  @media (max-width: 640px) {
-    .sidebar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      width: 100% !important;
-      height: 55vh;
-      max-height: 70vh;
-      border-right: none;
-      border-top: 3px solid var(--navy);
-      border-radius: 16px 16px 0 0;
-      z-index: 900;
-      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
-      transform: translateY(0);
-      box-shadow: 0 -4px 24px rgba(26,53,87,0.18);
-    }
-    .sidebar.collapsed {
-      transform: translateY(calc(100% - 48px));
-      width: 100% !important;
-    }
-    .sidebar-toggle {
-      position: static;
-      width: 100%;
-      height: 48px;
-      border-radius: 14px 14px 0 0;
-      right: auto;
-      top: auto;
-      transform: none;
-      border-bottom: 1px solid rgba(255,255,255,0.15);
-      font-size: 15px;
-      gap: 8px;
-      flex-direction: row;
-      order: -1;
-    }
-    .sidebar.collapsed .sidebar-toggle .toggle-arrow {
-      transform: rotate(-90deg);
-    }
-    .sidebar:not(.collapsed) .sidebar-toggle .toggle-arrow {
-      transform: rotate(90deg);
-    }
-    #map {
-      height: calc(100vh - 68px);
-      width: 100%;
-    }
-    .app-body {
-      flex-direction: column;
-      height: calc(100vh - 68px);
-    }
-  }
-
-  .sidebar-controls {
-    padding: 14px 16px;
+  /* Search bar */
+  #search-wrap {
+    padding: 12px;
     background: var(--cream);
     border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
   }
-
-  .search-wrap {
-    position: relative;
-    margin-bottom: 10px;
-  }
-
-  .search-wrap input {
+  #search-input {
     width: 100%;
-    padding: 11px 14px 11px 40px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--white);
-    font-family: 'Nunito', sans-serif;
-    font-size: 16px;
-    color: var(--text-primary);
+    padding: 10px 14px 10px 38px;
+    border: 1.5px solid var(--border);
+    border-radius: 30px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%234a6080' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398l3.85 3.85a1 1 0 0 0 1.415-1.415l-3.868-3.833zm-5.442 1.155a5 5 0 1 1 0-10 5 5 0 0 1 0 10z'/%3E%3C/svg%3E") no-repeat 12px center;
     outline: none;
-    transition: border-color 0.15s;
+    transition: border-color 0.2s;
   }
+  #search-input:focus { border-color: var(--teal); }
 
-  .search-wrap input:focus {
-    border-color: var(--navy);
-    box-shadow: 0 0 0 3px rgba(26,53,87,0.1);
-  }
-
-  .search-icon {
-    position: absolute;
-    left: 11px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-muted);
-    font-size: 15px;
-    pointer-events: none;
-  }
-
-  .filter-scroll {
+  /* Filter chips */
+  #filters {
+    padding: 8px 12px;
     display: flex;
     gap: 6px;
-    overflow-x: auto;
-    padding-bottom: 2px;
-    scrollbar-width: none;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+    background: white;
   }
-
-  .filter-scroll::-webkit-scrollbar { display: none; }
-
-  .filter-btn {
-    flex-shrink: 0;
-    padding: 7px 13px;
+  .chip {
+    padding: 5px 11px;
     border-radius: 20px;
     border: 1.5px solid var(--border);
-    background: var(--white);
-    color: var(--text-secondary);
-    font-family: 'Nunito', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 0.78rem;
+    font-weight: 700;
     cursor: pointer;
+    background: white;
+    color: var(--text-light);
+    display: flex; align-items: center; gap: 4px;
     transition: all 0.15s;
     white-space: nowrap;
-    touch-action: manipulation;
+    user-select: none;
   }
+  .chip:hover { border-color: var(--teal); color: var(--teal); }
+  .chip.active { background: var(--navy); color: white; border-color: var(--navy); }
+  .chip .icon { font-size: 0.9rem; }
 
-  .filter-btn:hover {
-    border-color: var(--navy);
-    color: var(--navy);
-  }
-
-  .filter-btn.active {
-    background: var(--navy);
-    border-color: var(--navy);
-    color: var(--white);
-  }
-
-  .sidebar-list {
+  /* Result list */
+  #result-list {
     flex: 1;
     overflow-y: auto;
-    padding: 0;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
+    padding: 8px;
   }
-
-  .sidebar-list::-webkit-scrollbar { width: 5px; }
-  .sidebar-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-  .result-count {
-    padding: 10px 16px 6px;
-    font-size: 14px;
-    color: var(--text-muted);
+  #result-count {
+    font-size: 0.8rem;
+    color: var(--text-light);
     font-weight: 600;
-    border-bottom: 1px solid var(--cream-dark);
+    padding: 4px 8px 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
-
   .resource-card {
-    padding: 15px 18px;
-    border-bottom: 1px solid var(--cream-dark);
-    cursor: pointer;
-    transition: background 0.12s;
-    touch-action: manipulation;
-  }
-
-  .resource-card:hover {
-    background: var(--cream);
-  }
-
-  .resource-card.selected {
-    background: #eef4fa;
-    border-left: 4px solid var(--navy);
-    padding-left: 14px;
-  }
-
-  .card-name {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--navy);
-    margin-bottom: 4px;
-    line-height: 1.3;
-  }
-
-  .card-desc {
-    font-size: 14px;
-    color: var(--text-secondary);
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px;
     margin-bottom: 8px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    line-height: 1.5;
-  }
-
-  .card-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-  }
-
-  .tag {
-    font-size: 12px;
-    padding: 3px 9px;
-    border-radius: 12px;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 700;
-    letter-spacing: 0.1px;
-  }
-
-  .tag-housing    { background: #e8f0f8; color: #1a4a7a; }
-  .tag-mental     { background: #e8f5f0; color: #0f5a47; }
-  .tag-substance  { background: #fdf0e0; color: #7a4a0a; }
-  .tag-medical    { background: #f0eafa; color: #4a2a7a; }
-  .tag-employment { background: #e8f8e8; color: #1a5a1a; }
-  .tag-food       { background: #faeaea; color: #7a1a1a; }
-  .tag-reentry    { background: #f0f0f0; color: #3a3a3a; }
-  .tag-family     { background: #faf0e8; color: #7a4a1a; }
-  .tag-education  { background: #e8eafa; color: #2a2a7a; }
-  .tag-benefits   { background: #e8faf0; color: #1a5a3a; }
-  .tag-other      { background: #f5f5f0; color: #5a5a4a; }
-
-  /* Map */
-  #map {
-    flex: 1;
-    z-index: 1;
-    min-height: 300px;
-    background: #f0ece4;
-  }
-
-  /* Popup overlay */
-  .popup-overlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(15, 32, 54, 0.55);
-    z-index: 2000;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-
-  .popup-overlay.open {
-    display: flex;
-  }
-
-  /* Map marker styles */
-  .custom-marker {
-    background: var(--navy);
-    border: 2.5px solid var(--white);
-    border-radius: 50%;
-    width: 16px;
-    height: 16px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-    transition: transform 0.12s, background 0.12s;
     cursor: pointer;
-  }
-
-  .custom-marker:hover {
-    transform: scale(1.6);
-    background: var(--gold);
-  }
-
-  /* Address tooltip on hover */
-  .marker-tooltip {
-    background: var(--navy-dark);
-    color: white;
-    font-family: 'Nunito', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 6px 10px;
-    border-radius: 6px;
-    white-space: nowrap;
-    pointer-events: none;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.35);
-  }
-
-  .leaflet-tooltip.marker-tooltip::before {
-    border-top-color: var(--navy-dark);
-  }
-
-  /* Leaflet popup custom */
-  .leaflet-popup-content-wrapper {
-    border-radius: 10px;
-    border-top: 3px solid var(--navy);
-    font-family: 'Nunito', sans-serif;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.22);
-    padding: 0;
-  }
-
-  .leaflet-popup-content {
-    margin: 0;
-    padding: 0;
-    min-width: 230px;
-    max-width: 300px;
-  }
-
-  .map-popup {
-    padding: 14px 16px;
-  }
-
-  .map-popup-name {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--navy);
-    margin-bottom: 4px;
-    line-height: 1.3;
-  }
-
-  .map-popup-addr {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-    font-weight: 600;
-  }
-
-  .map-popup-desc {
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin-bottom: 10px;
-    line-height: 1.45;
-  }
-
-  .map-popup-btn {
-    background: var(--navy);
-    color: white;
-    border: none;
-    padding: 9px 14px;
-    border-radius: 6px;
-    font-family: 'Nunito', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    width: 100%;
-    touch-action: manipulation;
-  }
-
-  .map-popup-btn:hover {
-    background: var(--navy-light);
-  }
-
-  .no-results {
-    padding: 36px 20px;
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 16px;
-    line-height: 1.6;
-  }
-
-  /* Leaflet tile attribution */
-  .leaflet-control-attribution {
-    font-size: 10px !important;
-  }
-
-  /* Distance badge */
-  .distance-badge {
-    font-size: 13px;
-    color: var(--accent-teal);
-    font-weight: 700;
-    margin-top: 5px;
-  }
-
-  /* Location bar */
-  .location-bar {
-    background: #f0f5fa;
-    border-bottom: 1px solid var(--border);
-    padding: 10px 16px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-    flex-wrap: wrap;
-  }
-
-  .location-btn {
-    background: var(--navy);
-    color: white;
-    border: none;
-    padding: 7px 14px;
-    border-radius: 6px;
-    font-family: 'Nunito', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    touch-action: manipulation;
-    min-height: 38px;
-  }
-
-  .location-btn:hover { background: var(--navy-light); }
-
-  /* ── DETAIL POPUP STRUCTURE ── */
-  .popup-box {
-    background: var(--white);
-    border-radius: 10px;
-    width: 100%;
-    max-width: 580px;
-    max-height: 85vh;
-    overflow-y: auto;
-    box-shadow: 0 8px 32px rgba(15,32,54,0.3);
-    border-top: 4px solid var(--navy);
-    scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
-  }
-
-  .popup-box::-webkit-scrollbar { width: 5px; }
-  .popup-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-  .popup-header {
-    background: var(--navy);
-    color: var(--white);
-    padding: 18px 20px 14px;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    border-radius: 10px 10px 0 0;
-  }
-
-  .popup-body {
-    background: var(--cream);
-    padding: 18px 20px 22px;
-  }
-
-  .popup-section {
-    background: var(--white);
-    border-radius: 8px;
-    padding: 14px 16px;
-    margin-bottom: 12px;
-    border: 1px solid var(--cream-dark);
-  }
-
-  .popup-divider {
-    border: none;
-    border-top: 1px solid var(--cream-dark);
-    margin: 4px 0 12px;
-  }
-
-  .popup-info-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 12px;
-  }
-
-  .info-item {
-    background: var(--white);
-    border-radius: 8px;
-    padding: 11px 14px;
-    border: 1px solid var(--cream-dark);
-  }
-
-  .info-item.full { grid-column: 1 / -1; }
-
-  .popup-services {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-top: 8px;
-  }
-
-  /* Popup fonts */
-  .popup-section-title {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--gold);
-    font-weight: 800;
-    margin-bottom: 6px;
-    font-family: 'Nunito', sans-serif;
-  }
-
-  .popup-section-text {
-    font-size: 15px;
-    color: var(--text-secondary);
-    line-height: 1.65;
-  }
-
-  .popup-org-name {
-    font-size: 19px;
-    font-weight: 800;
-    line-height: 1.3;
-    padding-right: 36px;
-  }
-
-  .info-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--text-muted);
-    font-weight: 700;
-    margin-bottom: 3px;
-  }
-
-  .info-value {
-    font-size: 15px;
-    color: var(--text-primary);
-    line-height: 1.45;
-    word-break: break-word;
-    font-weight: 600;
-  }
-
-  .info-value a { color: var(--accent-blue); text-decoration: none; }
-  .info-value a:hover { text-decoration: underline; }
-
-  .popup-close {
-    position: absolute;
-    top: 14px;
-    right: 16px;
-    background: rgba(255,255,255,0.15);
-    border: none;
-    color: white;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s;
-    font-weight: 700;
-    touch-action: manipulation;
-  }
-
-  .popup-close:hover { background: rgba(255,255,255,0.3); }
-
-  /* ── WELCOME BANNER ── */
-  .welcome-banner {
-    background: linear-gradient(135deg, #1d7a6e 0%, #1a3557 100%);
-    color: white;
-    padding: 12px 20px;
-    font-size: 15px;
-    font-weight: 600;
-    line-height: 1.5;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-shrink: 0;
+    transition: all 0.18s;
     position: relative;
   }
-  body.hc .welcome-banner { background: #000000; border-bottom: 2px solid #ffdd00; }
-  .welcome-banner-icon { font-size: 22px; flex-shrink: 0; }
-  .welcome-banner-text { flex: 1; }
-  .welcome-banner-close {
-    background: rgba(255,255,255,0.2);
-    border: none;
+  .resource-card:hover { border-color: var(--teal); box-shadow: 0 2px 12px rgba(42,143,160,0.15); }
+  .resource-card.selected { border-color: var(--navy); box-shadow: 0 2px 14px rgba(26,58,92,0.2); }
+  .card-header { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
+  .card-icon { font-size: 1.4rem; line-height: 1; margin-top: 1px; flex-shrink: 0; }
+  .card-title { font-weight: 800; font-size: 0.92rem; line-height: 1.3; color: var(--navy); }
+  .card-desc { font-size: 0.82rem; color: var(--text-light); line-height: 1.5; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .card-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+  .tag { font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .tag-housing { background: #e8f4fd; color: #1565c0; }
+  .tag-food { background: #fff3e0; color: #e65100; }
+  .tag-medical { background: #e8f5e9; color: #2e7d32; }
+  .tag-mental { background: #f3e5f5; color: #6a1b9a; }
+  .tag-substance { background: #fce4ec; color: #880e4f; }
+  .tag-employment { background: #e0f2f1; color: #00695c; }
+  .tag-reentry { background: #fff8e1; color: #f57f17; }
+  .tag-family { background: #e3f2fd; color: #0d47a1; }
+  .tag-education { background: #f1f8e9; color: #33691e; }
+  .tag-benefits { background: #fafafa; color: #424242; }
+  .tag-other { background: #f5f5f5; color: #616161; }
+  .card-phone-btn {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--teal);
     color: white;
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
     font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    touch-action: manipulation;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.15s;
+    width: fit-content;
   }
-  .welcome-banner-close:hover { background: rgba(255,255,255,0.35); }
+  .card-phone-btn:hover { background: var(--navy); }
+  .card-phone-btn .ph-icon { font-size: 1rem; }
+  .no-results { text-align: center; padding: 40px 20px; color: var(--text-light); }
 
-  /* ── EMERGENCY FAST-LANE BUTTON ── */
-  .emergency-fab {
-    position: fixed;
-    bottom: calc(var(--bottom-nav-height) + 20px);
-    right: 18px;
-    z-index: 1500;
-    background: var(--emergency);
+  /* ── MAP ── */
+  #map-wrap { flex: 1; position: relative; overflow: hidden; }
+  #map { width: 100%; height: 100%; }
+
+  /* ── EMERGENCY BUTTON ── */
+  #emergency-btn {
+    position: absolute;
+    bottom: 24px;
+    right: 20px;
+    background: var(--red);
     color: white;
     border: none;
-    border-radius: 50px;
-    padding: 13px 20px;
-    font-family: 'Nunito', sans-serif;
-    font-size: 15px;
+    border-radius: 30px;
+    padding: 14px 22px;
+    font-family: var(--font-body);
+    font-size: 1rem;
     font-weight: 800;
     cursor: pointer;
-    box-shadow: 0 4px 18px rgba(192,57,43,0.55);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    touch-action: manipulation;
-    transition: background 0.15s, transform 0.1s;
-    letter-spacing: 0.2px;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 4px 20px rgba(192,57,43,0.45);
+    z-index: 500;
+    transition: all 0.2s;
+    letter-spacing: 0.01em;
+    animation: pulse-red 2.5s infinite;
   }
-  .emergency-fab:hover { background: var(--emergency-dark); transform: scale(1.03); }
-  .emergency-fab.active-emergency { background: var(--emergency-dark); box-shadow: 0 0 0 4px rgba(192,57,43,0.3); }
-  @media (max-width: 640px) {
-    .emergency-fab { bottom: calc(64px + 16px); right: 14px; font-size: 14px; padding: 11px 16px; }
+  #emergency-btn:hover { transform: scale(1.04); box-shadow: 0 6px 28px rgba(192,57,43,0.55); }
+  @keyframes pulse-red {
+    0%,100% { box-shadow: 0 4px 20px rgba(192,57,43,0.45); }
+    50% { box-shadow: 0 4px 30px rgba(192,57,43,0.7); }
   }
+  #emergency-btn.active { background: var(--navy); animation: none; }
 
-  /* ── BOTTOM NAV (mobile only) ── */
-  .bottom-nav {
+  /* ── POPUP STYLES ── */
+  .leaflet-popup-content-wrapper {
+    border-radius: var(--radius) !important;
+    box-shadow: var(--shadow-lg) !important;
+    border: 1.5px solid var(--border);
+    max-width: 320px;
+    padding: 0 !important;
+    overflow: hidden;
+  }
+  .leaflet-popup-content { margin: 0 !important; width: 100% !important; }
+  .popup-inner { padding: 16px; }
+  .popup-title { font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; color: var(--navy); margin-bottom: 6px; line-height: 1.3; }
+  .popup-desc { font-size: 0.82rem; color: var(--text-light); line-height: 1.55; margin-bottom: 8px; }
+  .popup-section { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-light); margin: 8px 0 3px; }
+  .popup-eligibility { font-size: 0.82rem; color: var(--text); background: #f8fafd; border-left: 3px solid var(--teal); padding: 6px 10px; border-radius: 0 6px 6px 0; line-height: 1.5; }
+  .popup-address { font-size: 0.82rem; color: var(--text-light); margin: 6px 0 10px; display: flex; align-items: center; gap: 5px; }
+  .popup-actions { display: flex; gap: 8px; flex-wrap: wrap; padding: 10px 16px; background: var(--cream); border-top: 1px solid var(--border); }
+  .popup-btn {
+    display: flex; align-items: center; gap: 5px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s;
+    flex: 1;
+    justify-content: center;
+  }
+  .popup-btn.call { background: var(--teal); color: white; }
+  .popup-btn.call:hover { background: var(--navy); }
+  .popup-btn.directions { background: var(--navy); color: white; }
+  .popup-btn.directions:hover { background: var(--teal); }
+  .popup-btn.web { background: white; color: var(--navy); border: 1.5px solid var(--border); }
+  .popup-btn.web:hover { border-color: var(--navy); }
+  .leaflet-popup-close-button { font-size: 18px !important; color: var(--navy) !important; top: 8px !important; right: 10px !important; }
+
+  /* Custom marker clusters / markers */
+  .custom-marker {
+    display: flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    border: 2px solid white;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .custom-marker span { transform: rotate(45deg); display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
+
+  /* ── MOBILE BOTTOM NAV ── */
+  #bottom-nav {
     display: none;
     position: fixed;
     bottom: 0; left: 0; right: 0;
-    height: 64px;
-    background: var(--navy);
-    border-top: 2px solid var(--gold);
-    z-index: 950;
-    align-items: stretch;
-  }
-  body.hc .bottom-nav { background: #000000; border-top: 3px solid #ffdd00; }
-  .bottom-nav-btn {
-    flex: 1;
-    background: none;
-    border: none;
-    color: rgba(255,255,255,0.65);
-    font-family: 'Nunito', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
+    height: var(--bottom-bar-h);
+    background: white;
+    border-top: 1.5px solid var(--border);
+    z-index: 900;
+    justify-content: space-around;
     align-items: center;
-    justify-content: center;
-    gap: 3px;
-    touch-action: manipulation;
-    transition: color 0.15s, background 0.15s;
-    padding: 6px 0;
-    border-right: 1px solid rgba(255,255,255,0.08);
+    padding: 0 8px;
   }
-  .bottom-nav-btn:last-child { border-right: none; }
-  .bottom-nav-btn.active, .bottom-nav-btn:hover { color: white; background: rgba(255,255,255,0.1); }
-  .bottom-nav-icon { font-size: 20px; line-height: 1; }
-  @media (max-width: 640px) {
-    .bottom-nav { display: flex; }
-    :root { --bottom-nav-height: 64px; }
-    body { padding-bottom: 64px; }
-    .sidebar { bottom: 64px; }
-    .sidebar.collapsed { transform: translateY(calc(100%)); }
-  }
-
-  /* ── ICON styles on filter & tags ── */
-  .svc-icon { margin-right: 4px; }
-
-  /* ── CALL & DIRECTIONS buttons ── */
-  .action-btn-row {
-    display: flex;
-    gap: 10px;
-    margin-top: 14px;
-  }
-  .action-btn {
-    flex: 1;
-    padding: 12px 10px;
-    border-radius: 8px;
-    border: none;
-    font-family: 'Nunito', sans-serif;
-    font-size: 15px;
+  .bnav-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    background: none; border: none; cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 0.65rem;
     font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    touch-action: manipulation;
-    transition: opacity 0.15s;
-    text-decoration: none;
-  }
-  .action-btn:hover { opacity: 0.88; }
-  .action-btn-call { background: var(--accent-teal); color: white; }
-  .action-btn-dir  { background: var(--accent-blue); color: white; }
-  body.hc .action-btn-call { background: #005500; }
-  body.hc .action-btn-dir  { background: #0000aa; }
-
-  /* ── CARD call badge ── */
-  .card-phone {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--accent-teal);
-    margin-top: 6px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-  body.hc .card-phone { color: #005500; }
-
-  /* ── HIGH CONTRAST TOGGLE ── */
-  .hc-toggle {
-    position: fixed;
-    top: 80px;
-    right: 14px;
-    z-index: 1400;
-    background: var(--white);
-    border: 2px solid var(--border);
-    color: var(--text-primary);
-    border-radius: 50px;
-    padding: 6px 12px;
-    font-family: 'Nunito', sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 2px 8px var(--shadow);
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    touch-action: manipulation;
+    color: var(--text-light);
+    padding: 8px 12px;
+    border-radius: 10px;
     transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
-  .hc-toggle:hover { border-color: var(--navy); }
-  body.hc .hc-toggle { background: #ffdd00; color: #000000; border-color: #000000; }
+  .bnav-btn .bnav-icon { font-size: 1.4rem; line-height: 1; }
+  .bnav-btn.active { color: var(--navy); background: rgba(26,58,92,0.07); }
 
-  @media (max-width: 640px) {
-    .hc-toggle { top: auto; bottom: calc(64px + 80px); right: 14px; }
-    .popup-info-grid { grid-template-columns: 1fr; }
-    .popup-info-grid .info-item.full { grid-column: 1; }
-    .popup-box { max-height: 92vh; border-radius: 14px; }
-    .popup-header { border-radius: 14px 14px 0 0; }
-    header { padding: 0 14px; height: 58px; }
-    .header-title { font-size: 16px; }
-    .header-subtitle { display: none; }
-    .resource-count-badge { font-size: 12px; padding: 4px 10px; }
-    .action-btn { font-size: 14px; padding: 11px 8px; }
+  /* ── MOBILE SLIDE-UP SHEET ── */
+  #mobile-sheet {
+    display: none;
+    position: fixed;
+    bottom: var(--bottom-bar-h);
+    left: 0; right: 0;
+    background: white;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -4px 30px rgba(26,58,92,0.15);
+    z-index: 800;
+    flex-direction: column;
+    max-height: 75dvh;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.34,1.3,0.64,1);
   }
+  #mobile-sheet.open { transform: translateY(0); }
+  .sheet-handle { width: 40px; height: 4px; background: var(--border); border-radius: 4px; margin: 10px auto 0; }
+  .sheet-inner { flex: 1; overflow-y: auto; padding: 8px; }
+
+  /* ── DETAIL PANEL (mobile) ── */
+  #detail-panel {
+    display: none;
+    position: fixed;
+    bottom: var(--bottom-bar-h);
+    left: 0; right: 0;
+    background: white;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -4px 30px rgba(26,58,92,0.18);
+    z-index: 850;
+    flex-direction: column;
+    max-height: 80dvh;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.34,1.3,0.64,1);
+    overflow-y: auto;
+    padding-bottom: 20px;
+  }
+  #detail-panel.open { transform: translateY(0); }
+  #detail-close { position: absolute; top: 14px; right: 16px; background: var(--border); border: none; border-radius: 50%; width: 30px; height: 30px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text); z-index: 10; }
+  .detail-header { padding: 20px 50px 12px 20px; border-bottom: 1px solid var(--border); }
+  .detail-icon { font-size: 2rem; margin-bottom: 6px; }
+  .detail-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; color: var(--navy); line-height: 1.3; }
+  .detail-body { padding: 14px 20px; }
+  .detail-section-label { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-light); margin: 12px 0 4px; }
+  .detail-text { font-size: 0.9rem; color: var(--text); line-height: 1.6; }
+  .detail-elig { font-size: 0.88rem; color: var(--text); background: #f8fafd; border-left: 3px solid var(--teal); padding: 8px 12px; border-radius: 0 8px 8px 0; line-height: 1.6; }
+  .detail-actions { display: flex; gap: 10px; flex-wrap: wrap; padding: 14px 20px; }
+  .detail-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 13px 18px;
+    border-radius: 10px;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 800;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s;
+    flex: 1;
+    justify-content: center;
+    min-height: 50px;
+  }
+  .detail-btn.call { background: var(--teal); color: white; }
+  .detail-btn.call:hover { background: var(--navy); }
+  .detail-btn.directions { background: var(--navy); color: white; }
+  .detail-btn.directions:hover { background: var(--teal); }
+  .detail-btn.web { background: white; color: var(--navy); border: 1.5px solid var(--border); }
+
+  /* Emergency filter active banner */
+  #emergency-banner {
+    display: none;
+    background: var(--red);
+    color: white;
+    text-align: center;
+    padding: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    z-index: 600;
+  }
+  #emergency-banner.visible { display: block; }
+
+  /* Scrollbar */
+  #result-list::-webkit-scrollbar,
+  .sheet-inner::-webkit-scrollbar,
+  #detail-panel::-webkit-scrollbar { width: 5px; }
+  #result-list::-webkit-scrollbar-thumb,
+  .sheet-inner::-webkit-scrollbar-thumb,
+  #detail-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+  /* Tooltip override */
+  .leaflet-tooltip {
+    background: var(--navy) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-family: var(--font-body) !important;
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+    padding: 5px 10px !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2) !important;
+  }
+  .leaflet-tooltip::before { border-top-color: var(--navy) !important; }
+
+  /* Leaflet tile filter for warm light look */
+  .leaflet-tile { filter: saturate(0.7) brightness(1.05) hue-rotate(5deg); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    #sidebar-wrap { display: none; }
+    #bottom-nav { display: flex; }
+    #mobile-sheet { display: flex; }
+    #emergency-btn { bottom: calc(var(--bottom-bar-h) + 16px); right: 16px; font-size: 0.88rem; padding: 12px 18px; }
+    body { overflow: hidden; }
+  }
+  @media (min-width: 701px) {
+    #detail-panel { display: none !important; }
+  }
+
+  /* Fade in cards */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .resource-card { animation: fadeUp 0.2s ease both; }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="header-left">
-    <div class="header-badge">PBC</div>
-    <div>
-      <div class="header-title">Palm Beach County <span>Resource Guide</span></div>
-      <div class="header-subtitle">Free community services &mdash; Palm Beach County, Florida</div>
-    </div>
+<!-- TOP BAR -->
+<div id="topbar">
+  <div class="logo">
+    PBC Resource Guide
+    <span>Office of the Public Defender · 15th Circuit</span>
   </div>
-  <div class="resource-count-badge" id="total-count">Loading resources&hellip;</div>
-</header>
-
-<!-- Welcome Banner (#8) -->
-<div class="welcome-banner" id="welcome-banner">
-  <span class="welcome-banner-icon">🤝</span>
-  <div class="welcome-banner-text">
-    <strong>This guide is for you.</strong> Every resource listed here is free or low-cost. Palm Beach County is here for you with no judgement.
-  </div>
-  <button class="welcome-banner-close" onclick="document.getElementById('welcome-banner').style.display='none'" aria-label="Close welcome message">&times;</button>
+  <div class="badge">Palm Beach County</div>
 </div>
 
-<div class="app-body">
-<div class="sidebar" id="sidebar">
-    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">
-      <span class="toggle-arrow">&#8249;</span>
+<!-- EMERGENCY BANNER -->
+<div id="emergency-banner" onclick="clearEmergency()">
+  🚨 Showing 24/7 crisis &amp; emergency resources only — Tap to show all
+</div>
+
+<!-- MAIN LAYOUT -->
+<div id="layout">
+
+  <!-- SIDEBAR WRAP -->
+  <div id="sidebar-wrap">
+    <div id="sidebar">
+      <div class="sidebar-content">
+        <!-- Search -->
+        <div id="search-wrap">
+          <input type="text" id="search-input" placeholder="Search resources..." autocomplete="off" />
+        </div>
+        <!-- Filter chips -->
+        <div id="filters">
+          <div class="chip active" data-cat="all"><span class="icon">🗺</span>All</div>
+          <div class="chip" data-cat="Housing"><span class="icon">🏠</span>Housing</div>
+          <div class="chip" data-cat="Food"><span class="icon">🍎</span>Food</div>
+          <div class="chip" data-cat="Medical"><span class="icon">🏥</span>Medical</div>
+          <div class="chip" data-cat="Mental Health"><span class="icon">🧠</span>Mental Health</div>
+          <div class="chip" data-cat="Substance Use"><span class="icon">💊</span>Substance Use</div>
+          <div class="chip" data-cat="Employment"><span class="icon">💼</span>Employment</div>
+          <div class="chip" data-cat="Reentry"><span class="icon">🔑</span>Reentry</div>
+          <div class="chip" data-cat="Family/Child Services"><span class="icon">👨‍👩‍👧</span>Family</div>
+        </div>
+        <!-- Results -->
+        <div id="result-list">
+          <div id="result-count"></div>
+          <div id="cards-container"></div>
+          <div class="no-results" id="no-results" style="display:none">No resources match your search.</div>
+        </div>
+      </div>
+      <button class="sidebar-toggle" id="sidebar-toggle-btn" onclick="toggleSidebar()" title="Toggle sidebar">◀</button>
+    </div>
+  </div>
+
+  <!-- MAP -->
+  <div id="map-wrap">
+    <div id="map"></div>
+    <!-- Emergency Button -->
+    <button id="emergency-btn" onclick="toggleEmergency()">
+      🚨 I Need Help Right Now
     </button>
-    <div class="location-bar">
-      <span id="location-status">&#128205; Location not set &mdash;</span>
-      <button class="location-btn" onclick="getUserLocation()">📍 Find My Location</button>
-    </div>
-    <div class="sidebar-controls">
-      <div class="search-wrap">
-        <span class="search-icon">&#128269;</span>
-        <input type="text" id="search-input" placeholder="Search by name or service&hellip;" oninput="filterResources()" />
-      </div>
-      <div class="filter-scroll" id="filter-buttons"></div>
-    </div>
-    <div class="result-count" id="result-count"></div>
-    <div class="sidebar-list" id="resource-list"></div>
   </div>
-  <div id="map"></div>
 </div>
 
-<!-- Emergency Fast-Lane FAB (#4) -->
-<button class="emergency-fab" id="emergency-fab" onclick="toggleEmergency()" aria-label="Show emergency resources">
-  🚨 <span id="emergency-label">I Need Help Now</span>
-</button>
+<!-- MOBILE BOTTOM NAV -->
+<div id="bottom-nav">
+  <button class="bnav-btn active" id="bnav-map" onclick="mobileNav('map')">
+    <span class="bnav-icon">🗺</span>Map
+  </button>
+  <button class="bnav-btn" id="bnav-list" onclick="mobileNav('list')">
+    <span class="bnav-icon">📋</span>List
+  </button>
+  <button class="bnav-btn" id="bnav-search" onclick="mobileNav('search')">
+    <span class="bnav-icon">🔍</span>Search
+  </button>
+  <button class="bnav-btn" id="bnav-filters" onclick="mobileNav('filters')">
+    <span class="bnav-icon">🎯</span>Filters
+  </button>
+</div>
 
-<!-- High Contrast Toggle (#10) -->
-<button class="hc-toggle" onclick="toggleHighContrast()" id="hc-btn" aria-label="Toggle high contrast mode">
-  ☀️ High Contrast
-</button>
-
-<!-- Bottom Nav (#3) -->
-<nav class="bottom-nav" role="navigation" aria-label="Main navigation">
-  <button class="bottom-nav-btn active" id="nav-map" onclick="bottomNav('map')" aria-label="Map view">
-    <span class="bottom-nav-icon">🗺️</span>Map
-  </button>
-  <button class="bottom-nav-btn" id="nav-list" onclick="bottomNav('list')" aria-label="Resource list">
-    <span class="bottom-nav-icon">📋</span>List
-  </button>
-  <button class="bottom-nav-btn" id="nav-search" onclick="bottomNav('search')" aria-label="Search">
-    <span class="bottom-nav-icon">🔍</span>Search
-  </button>
-  <button class="bottom-nav-btn" id="nav-emergency" onclick="toggleEmergency()" aria-label="Emergency resources">
-    <span class="bottom-nav-icon">🚨</span>Help Now
-  </button>
-</nav>
-
-<!-- Detail Popup -->
-<div class="popup-overlay" id="detail-popup" onclick="closePopup(event)">
-  <div class="popup-box">
-    <div class="popup-header">
-      <button class="popup-close" onclick="closePopupDirect()">&times;</button>
-      <div class="popup-org-name" id="popup-name"></div>
-      <div class="popup-services" id="popup-tags"></div>
-    </div>
-    <div class="popup-body">
-      <div class="popup-section" id="popup-desc-section">
-        <div class="popup-section-title">About</div>
-        <div class="popup-section-text" id="popup-desc"></div>
-      </div>
-      <!-- Action buttons: Call + Directions (#6 #7) -->
-      <div class="action-btn-row" id="popup-actions"></div>
-      <hr class="popup-divider">
-      <div class="popup-info-grid" id="popup-grid"></div>
-      <div class="popup-section" id="popup-req-section" style="margin-top:14px">
-        <div class="popup-section-title">Who Can Use This</div>
-        <div class="popup-section-text" id="popup-req"></div>
-      </div>
-      <div class="popup-section" id="popup-notes-section" style="margin-top:14px">
-        <div class="popup-section-title">Good to Know</div>
-        <div class="popup-section-text" id="popup-notes"></div>
-      </div>
-    </div>
+<!-- MOBILE SLIDE-UP SHEET (list + search + filters) -->
+<div id="mobile-sheet">
+  <div class="sheet-handle"></div>
+  <div id="mobile-sheet-search-wrap" style="padding:10px 12px 0;display:none;">
+    <input type="text" id="mobile-search-input" placeholder="Search resources..." style="width:100%;padding:10px 14px 10px 38px;border:1.5px solid var(--border);border-radius:30px;font-family:var(--font-body);font-size:1rem;background:white url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 fill=%22%234a6080%22 viewBox=%220 0 16 16%22%3E%3Cpath d=%22M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398l3.85 3.85a1 1 0 0 0 1.415-1.415l-3.868-3.833zm-5.442 1.155a5 5 0 1 1 0-10 5 5 0 0 1 0 10z%22/%3E%3C/svg%3E') no-repeat 12px center;outline:none;" autocomplete="off" />
   </div>
+  <div id="mobile-sheet-filters-wrap" style="padding:8px 12px 0;display:none;flex-wrap:wrap;gap:6px;">
+    <div class="chip active" data-mcat="all"><span class="icon">🗺</span>All</div>
+    <div class="chip" data-mcat="Housing"><span class="icon">🏠</span>Housing</div>
+    <div class="chip" data-mcat="Food"><span class="icon">🍎</span>Food</div>
+    <div class="chip" data-mcat="Medical"><span class="icon">🏥</span>Medical</div>
+    <div class="chip" data-mcat="Mental Health"><span class="icon">🧠</span>Mental</div>
+    <div class="chip" data-mcat="Substance Use"><span class="icon">💊</span>Substance</div>
+    <div class="chip" data-mcat="Employment"><span class="icon">💼</span>Jobs</div>
+    <div class="chip" data-mcat="Reentry"><span class="icon">🔑</span>Reentry</div>
+    <div class="chip" data-mcat="Family/Child Services"><span class="icon">👨‍👩‍👧</span>Family</div>
+  </div>
+  <div class="sheet-inner" id="sheet-cards"></div>
+</div>
+
+<!-- MOBILE DETAIL PANEL -->
+<div id="detail-panel">
+  <button id="detail-close" onclick="closeDetail()">✕</button>
+  <div class="sheet-handle" style="margin-bottom:0;"></div>
+  <div class="detail-header" id="detail-header"></div>
+  <div class="detail-body" id="detail-body"></div>
+  <div class="detail-actions" id="detail-actions"></div>
 </div>
 
 <script>
-const RESOURCES = [
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+const resources = [
   {
     name: "Adopt-a-Family of the Palm Beaches",
     desc: "Family homeless services, emergency shelter, housing, case management, youth program",
-    services: ["Housing","Family/Child Services","Referrals"],
+    services: ["Housing","Family/Child Services"],
     phone: "561-253-1361",
     address: "1712 2nd Ave North, Lake Worth Beach, FL 33460",
     website: "https://www.aafpbc.org/",
-    eligibility: "Live in Palm Beach County, have minor children in the household, provide 3-day notice or proof of imminent eviction. Need a source of income.",
-    notes: "",
-    lat: 26.61836, lng: -80.06555
+    eligibility: "Live in Palm Beach County, have minor children in the household, call to provide 3-day notice or proof of imminent eviction. Need a source of income to live on assistance.",
+    crisis: false, lat: 26.61836, lng: -80.06555
   },
   {
     name: "Aid to Victims of Domestic Violence (AVDA)",
-    desc: "64-bed emergency shelter, staffed 24 hours, provides domestic violence survivors and their children and pets a safe place for at least six weeks.",
-    services: ["Reentry","Housing"],
-    phone: "Crisis: (800) 355-8547 | Admin: (561) 265-3797",
-    address: "P.O. Box 6161, Delray Beach, FL 33482-6161",
+    desc: "64-bed emergency shelter staffed 24 hours a day for domestic violence survivors and their children and pets.",
+    services: ["Housing"],
+    phone: "800-355-8547",
+    address: "P.O. Box 6161, Delray Beach, FL 33482",
     website: "https://www.avdaonline.org/",
-    eligibility: "No requirements. Call administrative office/hotline to request a bed.",
-    notes: "",
-    lat: 26.46819, lng: -80.07022
+    eligibility: "No requirements — call hotline to request a bed.",
+    crisis: true, lat: 26.4635, lng: -80.0728
   },
   {
     name: "Alcoholics Anonymous (Palm Beach County)",
-    desc: "Support group for people struggling with alcohol dependence. In-person and virtual meetings available.",
+    desc: "Support group for people struggling with alcohol dependence — in-person and virtual meetings.",
     services: ["Substance Use"],
-    phone: "(561) 655-5700",
-    address: "1371 Old Okeechobee Road, West Palm Beach",
+    phone: "561-655-5700",
+    address: "1371 Old Okeechobee Road, West Palm Beach, FL",
     website: "https://aa-palmbeachcounty.org/",
     eligibility: "No requirements. Ability to attend in person or internet access to attend virtually.",
-    notes: "No referral needed. Client may need assistance with transportation (prefers in person).",
-    lat: 26.69921, lng: -80.07022
+    crisis: false, lat: 26.69921, lng: -80.07022
   },
   {
     name: "Alpert Jewish Family Services",
-    desc: "Counseling and mental health treatment services for individuals and families.",
+    desc: "Counseling and mental health treatment services.",
     services: ["Mental Health"],
-    phone: "(561) 684-1991",
+    phone: "561-684-1991",
     address: "5841 Corporate Way, Suite 200, West Palm Beach, FL 33407",
     website: "https://www.alpertjfs.org/",
-    eligibility: "Must fill out intake forms. Submit application at alpertjfs.org/client-forms/",
-    notes: "",
-    lat: 26.76431, lng: -80.09199
-  },
-  {
-    name: "Banyan Group Counseling",
-    desc: "Psychiatric evaluation and mental health services. Accepts most major insurance plans.",
-    services: ["Mental Health"],
-    phone: "1.561.967.2566",
-    address: "3898 Via Poinciana Dr, Suite 13, Lake Worth, FL 33467",
-    website: "https://banyangroup.com/",
-    eligibility: "No requirements. Health insurance required; financial assistance possible in some cases.",
-    notes: "",
-    lat: 26.61908, lng: -80.15365
+    eligibility: "Must fill out intake forms.",
+    crisis: false, lat: 26.76431, lng: -80.09199
   },
   {
     name: "Banyan Treatment Centers",
-    desc: "Residential treatment for substance/alcohol dependence and mental health. Offers detox, residential, PHP, and IOP. Minimum 28-day stay. Provides acceptance letter for court.",
+    desc: "Residential treatment for substance/alcohol dependence and mental health. Detox, residential, PHP, and IOP — minimum 28 days.",
     services: ["Substance Use","Mental Health"],
-    phone: "Admissions: (954) 945-7520 | Sophia Wetmore: (215) 816-9200",
+    phone: "954-945-7520",
     address: "950 N Federal Hwy #115, Pompano Beach, FL 33062",
     website: "https://www.banyantreatmentcenter.com/",
-    eligibility: "Health insurance required (most major plans). Financial assistance possible.",
-    notes: "Banyan will provide an acceptance letter to provide to the court.",
-    lat: 26.24188, lng: -80.10121
+    eligibility: "Health insurance required (most major plans accepted). Financial assistance possible.",
+    crisis: false, lat: 26.24188, lng: -80.10121
   },
   {
     name: "Behavioral Health of the Palm Beaches (Banyan)",
-    desc: "Substance use and mental health treatment center. Offers detox and post-treatment plans with potential sober housing.",
+    desc: "Substance use and mental health treatment center offering detox and post-treatment plans with potential sober housing.",
     services: ["Substance Use","Mental Health"],
-    phone: "(888) 432-2467",
+    phone: "888-432-2467",
     address: "7859 Lake Worth Road, Lake Worth, FL",
     website: "https://www.banyantreatmentcenter.com/facilities/behavioral-health-of-the-palm-beaches/",
-    eligibility: "Addiction and/or mental health condition. Health insurance (most major plans). Financial assistance possible.",
-    notes: "Call (888)-432-2467 to speak with admissions. Offers detox and post-treatment sober housing.",
-    lat: 26.6181, lng: -80.17089
+    eligibility: "Addiction and/or mental health condition. Health insurance required.",
+    crisis: false, lat: 26.6181, lng: -80.17089
   },
   {
     name: "Better Way of Miami",
-    desc: "Rehabilitation center offering mental health treatment, substance abuse treatment, support groups, and employment assistance.",
+    desc: "Rehabilitation center offering mental health & substance abuse treatment, support groups, and employment assistance.",
     services: ["Reentry","Mental Health","Employment"],
-    phone: "Outpatient: (305) 582-8066 | Valerie Bradford: (305) 634-3409 x121",
+    phone: "305-634-3409",
     address: "800 NW 28th St, Miami, FL 33127",
     website: "https://www.betterwayofmiami.org/",
-    eligibility: "Facing substance use, mental health challenges or diagnosed with HIV. Pre-treatment screening required.",
-    notes: "Contact Valerie Bradford for pre-screening form. After screening, she provides an admission date.",
-    lat: 25.80254, lng: -80.20968
-  },
-  {
-    name: "Better Way of Miami — Housing",
-    desc: "Permanent supportive housing for those with substance use, mental health challenges, or HIV.",
-    services: ["Housing"],
-    phone: "(305) 634-3409 x119",
-    address: "800 NW 28th St, Miami, FL 33127",
-    website: "https://www.betterwayofmiami.org/housing",
-    eligibility: "Facing substance use, mental health challenges or diagnosed with HIV. Pre-treatment screening required.",
-    notes: "",
-    lat: 25.80254, lng: -80.21068
+    eligibility: "Facing substance use, mental health challenges, or diagnosed with HIV. Pre-screening required.",
+    crisis: false, lat: 25.80254, lng: -80.20968
   },
   {
     name: "Bill's Place — Men's Shelter (The Lord's Place)",
-    desc: "Homeless shelter and recovery program for single men aged 50 and over. Run by The Lord's Place.",
+    desc: "Homeless shelter and recovery program for single men aged 50 and over. NOT OPEN YET AS OF 8/13/2025.",
     services: ["Housing","Employment"],
-    phone: "561.494.0125",
+    phone: "561-494-0125",
     address: "Melaleuca Drive, West Palm Beach, FL",
     website: "https://thelordsplace.org/what-we-do/supportive-housing/bills-place/",
-    eligibility: "Men 50+.",
-    notes: "NOT OPEN YET AS OF 8/13/2025. The Lord's Place also has reentry and employment programs.",
-    lat: 26.73885, lng: -80.06806
+    eligibility: "Men 50 and older.",
+    crisis: false, lat: 26.73885, lng: -80.06806
   },
   {
     name: "Boys Town of South Florida",
-    desc: "Provides a variety of services to assess children's needs and keep struggling families together.",
-    services: ["Substance Use","Mental Health"],
-    phone: "(561) 612-6069",
+    desc: "Variety of services to assess children's needs and keep struggling families together.",
+    services: ["Substance Use","Mental Health","Family/Child Services"],
+    phone: "561-612-6069",
     address: "1655 Palm Beach Lakes Blvd., Suite 300, West Palm Beach, FL 33401",
     website: "http://www.boystown.org/locations/south-florida",
-    eligibility: "Must be under 18 with parents, or have children. Must have insurance or form of payment for residential & clinic services.",
-    notes: "Call to schedule intake.",
-    lat: 26.72548, lng: -80.08207
+    eligibility: "Must be under 18 with parents, or have children. Insurance or payment required for residential/clinic services.",
+    crisis: false, lat: 26.72548, lng: -80.08207
   },
   {
     name: "Burckle Place — Women's Shelter (The Lord's Place)",
     desc: "Homeless shelter for single women. Burckle Place III prioritizes women ages 55+.",
     services: ["Housing","Employment"],
-    phone: "305.497.9138",
+    phone: "305-497-9138",
     address: "711 S J St, Lake Worth Beach, FL 33460",
     website: "https://thelordsplace.org/what-we-do/supportive-housing/burckle-place/",
-    eligibility: "Single women. Burckle Place III prioritizes women ages 55+.",
-    notes: "Email BurcklePlace@TheLordsPlace.org or call 305.497.9138 to inquire.",
-    lat: 26.60702, lng: -80.05665
+    eligibility: "Single women (Burckle Place III prioritizes women 55+).",
+    crisis: false, lat: 26.60702, lng: -80.05665
   },
   {
     name: "CareerSource Palm Beach County",
-    desc: "Supports individuals with securing meaningful employment, job search skills, and reentry transition planning.",
-    services: ["Housing","Employment"],
-    phone: "(561) 340-1060 Option 4",
+    desc: "Employment support — job search assistance, skills development, and reentry transition planning.",
+    services: ["Employment"],
+    phone: "561-340-1060",
     address: "3400 Belvedere Road, West Palm Beach, FL 33406",
     website: "https://www.careersourcepbc.com/",
     eligibility: "No requirements.",
-    notes: "Contact Candace Radix to schedule individual intake for job search, skills, and reentry transition.",
-    lat: 26.69093, lng: -80.09305
+    crisis: false, lat: 26.69093, lng: -80.09305
   },
   {
     name: "Caridad Center",
-    desc: "Free healthcare, dental care, and mental health services for uninsured and low-income individuals.",
+    desc: "Free healthcare, dental care, and mental health services.",
     services: ["Medical","Mental Health"],
-    phone: "(561) 737-6336",
+    phone: "561-737-6336",
     address: "8645 Boynton Beach Blvd, Boynton Beach, FL",
     website: "https://caridad.org/about-caridad/",
-    eligibility: "Must be uninsured or live at or below 200% federal poverty level. Bring proof of income, ID, and proof of address.",
-    notes: "Must make an appointment. Call the specific clinic line, leave a message, and Caridad will call back by EOD.",
-    lat: 26.52904, lng: -80.18249
+    eligibility: "Must be uninsured or at/below 200% federal poverty level. Proof of income, ID, and proof of address required.",
+    crisis: false, lat: 26.52904, lng: -80.18249
   },
   {
     name: "Center for Family Services",
-    desc: "Individual and group/family therapy services — nonprofit social services organization. Has prenatal program and parenting classes.",
+    desc: "Individual and group/family therapy — nonprofit social services. Offers prenatal and parenting programs.",
     services: ["Mental Health","Family/Child Services","Substance Use"],
-    phone: "(561) 616-1222",
+    phone: "561-616-1222",
     address: "4101 Parker Ave, West Palm Beach, FL 33405",
     website: "https://ctrfam.org/about-us/",
     eligibility: "Sliding scale fee if uninsured.",
-    notes: "Has a prenatal program and parenting classes.",
-    lat: 26.67528, lng: -80.06318
+    crisis: false, lat: 26.67528, lng: -80.06318
   },
   {
     name: "Covenant House",
-    desc: "Shelter housing for young adults (18-22); programs include counseling, case management, family reunification, parenting education, GED, and medical services.",
+    desc: "Shelter housing for young adults (18–22) — counseling, case management, family reunification, parenting education, GED, medical.",
     services: ["Housing","Education","Mental Health"],
-    phone: "(954) 561-5559",
+    phone: "954-561-5559",
     address: "733 Breakers Avenue, Fort Lauderdale, FL 33304",
-    website: "https://www.covenanthousefl.org/",
-    eligibility: "Ages 18-22.",
-    notes: "Contact for admissions.",
-    lat: 26.13357, lng: -80.10484
+    website: "https://www.covenanthousefl.org/copy-of-fort-lauderdale",
+    eligibility: "Ages 18–22.",
+    crisis: false, lat: 26.13357, lng: -80.10484
   },
   {
     name: "DOE Vocational Rehabilitation",
     desc: "Vocational rehabilitation services to help disabled people obtain employment.",
     services: ["Employment","Mental Health"],
     phone: "561-624-6957",
-    address: "400 North Congress Ave., Suite 300, West Palm Beach 33401",
+    address: "400 North Congress Ave., Suite 300, West Palm Beach, FL 33401",
     website: "https://www.rehabworks.org/adult-programs/adult-programs.html",
-    eligibility: "Documented physical or mental impairment that creates a substantial barrier to employment. Referral sheet required.",
-    notes: "",
-    lat: 26.80354, lng: -80.08315
+    eligibility: "Documented physical or mental impairment creating a substantial barrier to employment.",
+    crisis: false, lat: 26.80354, lng: -80.08315
   },
   {
-    name: "Drug Abuse Foundation",
-    desc: "Residential treatment program tailored to those with dual-diagnosis. Emergency services walk-in 24/7. Typical 90-day treatment.",
+    name: "Drug Abuse Foundation (Delray Beach)",
+    desc: "Residential treatment for dual-diagnosis. Emergency walk-in services 24/7. Treatment typically 90 days.",
     services: ["Substance Use"],
-    phone: "(561) 278-0000",
+    phone: "561-278-0000",
     address: "400 S Swinton Ave, Delray Beach, FL",
     website: "https://www.dafpbci.org/",
-    eligibility: "Clinical level of care assessment required. Priority given to those on felony probation.",
-    notes: "Walk-in 24/7 for emergency services. Treatment typically 90 days; longer if pregnant.",
-    lat: 26.45368, lng: -80.07347
+    eligibility: "All services informed by clinical level of care assessments. Priority given to those on felony probation.",
+    crisis: true, lat: 26.45368, lng: -80.07347
   },
   {
     name: "El Sol: Jupiter Neighborhood Resource Center",
-    desc: "General social services including adult education, food/nutrition, youth development. Originally founded to support day-laborers.",
+    desc: "General social services — adult education, food/nutrition, youth development. Originally founded to support day laborers.",
     services: ["Housing","Employment","Education","Food","Family/Child Services"],
-    phone: "(561) 745-9860",
+    phone: "561-745-9860",
     address: "106 Military Trail, Jupiter, FL 33458",
     website: "https://friendsofelsol.org/history/",
     eligibility: "No requirements.",
-    notes: "Good resource for employment connections.",
-    lat: 26.93269, lng: -80.1024
+    crisis: false, lat: 26.93269, lng: -80.1024
   },
   {
     name: "Faith Farm — Boynton Beach",
-    desc: "9-12 month residential faith-based substance abuse recovery facility. After core program, students may join Omega Work/School programs.",
+    desc: "9–12 month residential faith-based substance abuse recovery facility.",
     services: ["Housing","Substance Use"],
-    phone: "(844) 946-8253",
+    phone: "844-946-8253",
     address: "9583 US Highway 441, Boynton Beach, FL 33472",
     website: "https://www.faithfarm.org/about-us/",
-    eligibility: "No mental health or pain medications stronger than Tylenol. Valid ID, SS card, 90-day medication supply.",
-    notes: "Must complete admissions form.",
-    lat: 26.53326, lng: -80.20561
+    eligibility: "No mental health or pain medications stronger than Tylenol. Valid ID and SS card required.",
+    crisis: false, lat: 26.53326, lng: -80.20561
   },
   {
     name: "Faith Farm — Fort Lauderdale",
-    desc: "9-12 month residential faith-based substance abuse recovery facility.",
+    desc: "9–12 month residential faith-based substance abuse recovery facility.",
     services: ["Housing","Substance Use"],
-    phone: "(844) 946-8253",
+    phone: "844-946-8253",
     address: "1980 NW 9th Ave, Fort Lauderdale, FL 33311",
     website: "https://www.faithfarm.org/about-us/",
-    eligibility: "No mental health or pain medications stronger than Tylenol. Valid ID, SS card, 90-day supply.",
-    notes: "Must complete admissions form.",
-    lat: 26.15346, lng: -80.15341
+    eligibility: "No mental health or pain medications stronger than Tylenol. Valid ID and SS card required.",
+    crisis: false, lat: 26.15346, lng: -80.15341
   },
   {
     name: "Faith Farm — Okeechobee",
-    desc: "9-12 month residential faith-based substance abuse recovery facility.",
+    desc: "9–12 month residential faith-based substance abuse recovery facility.",
     services: ["Housing","Substance Use"],
-    phone: "(844) 946-8253",
+    phone: "844-946-8253",
     address: "7595 NE 128th Ave, Okeechobee, FL 34972",
     website: "https://www.faithfarm.org/about-us/",
-    eligibility: "No mental health or pain medications stronger than Tylenol. Valid ID, SS card, 90-day supply.",
-    notes: "Must complete admissions form.",
-    lat: 27.31933, lng: -80.69727
+    eligibility: "No mental health or pain medications stronger than Tylenol. Valid ID and SS card required.",
+    crisis: false, lat: 27.31933, lng: -80.69727
   },
   {
     name: "Families First of Palm Beach County",
     desc: "Behavioral health and housing support for families.",
     services: ["Family/Child Services","Mental Health","Housing"],
     phone: "561-721-2887",
-    address: "3333 Forest Hill Blvd. 2nd Floor, West Palm Beach, FL 33406",
+    address: "3333 Forest Hill Blvd., 2nd Floor, West Palm Beach, FL 33406",
     website: "https://familiesfirstpbc.org/",
-    eligibility: "",
-    notes: "",
-    lat: 26.65294, lng: -80.09368
+    eligibility: "Contact for eligibility.",
+    crisis: false, lat: 26.65294, lng: -80.09368
   },
   {
-    name: "Family Promise",
-    desc: "Utilizes faith community resources to provide temporary shelter, meals, and support. Admission may take 2-3 weeks. Not an emergency shelter.",
+    name: "Family Promise of SE Florida",
+    desc: "Temporary shelter, meals, and support services through local faith communities. Not an emergency shelter — admission may take 2–3 weeks.",
     services: ["Housing","Employment"],
-    phone: "(561) 265-3370 ext. 105",
+    phone: "561-265-3370",
     address: "352 NE 3rd Ave., Delray Beach, FL 33444",
     website: "https://www.familypromisesefl.org/",
-    eligibility: "Must pass pre-screening and fill out application forms.",
-    notes: "Not an emergency shelter — admission may take 2-3 weeks.",
-    lat: 26.46819, lng: -80.07022
+    eligibility: "Must pass pre-screening and fill out forms.",
+    crisis: false, lat: 26.46819, lng: -80.07022
   },
   {
     name: "Faulk Center for Counseling",
-    desc: "Low-cost and free psychological services for adults and children. Telehealth programs available.",
+    desc: "Low cost and free psychological services for adults and children. Telehealth available.",
     services: ["Mental Health","Family/Child Services"],
     phone: "561-483-5300",
     address: "22455 Boca Rio Road, Boca Raton, FL 33433",
     website: "https://faulkcenterforcounseling.org/about-us/",
-    eligibility: "No requirements — program targets low-income individuals.",
-    notes: "Telehealth programs available.",
-    lat: 26.34242, lng: -80.17199
+    eligibility: "Targeted towards low-income individuals — no income requirements.",
+    crisis: false, lat: 26.34242, lng: -80.17199
   },
   {
     name: "Fern House",
-    desc: "Residential rehabilitation center for treating substance use. Weekly rent $260.",
+    desc: "Residential rehabilitation center for substance use issues. Men only. Weekly rent $260.",
     services: ["Substance Use"],
-    phone: "(561) 471-0430",
+    phone: "561-471-0430",
     address: "1958 Church St, West Palm Beach, FL 33409",
     website: "https://fernhouse.org/",
     eligibility: "Male only. Must be employed or looking for work. No mood-altering prescription drugs.",
-    notes: "Must complete application and interview. Weekly rent is $260.",
-    lat: 26.70557, lng: -80.08247
+    crisis: false, lat: 26.70557, lng: -80.08247
   },
   {
     name: "Florida Center for Addictions and Dual Disorders",
-    desc: "65-day inpatient treatment for dual-diagnosis, followed by 90 days at halfway house or home. Must be tobacco-free.",
+    desc: "65-day inpatient dual-diagnosis treatment center + 90 days transitional housing.",
     services: ["Substance Use"],
-    phone: "863-452-3858 ext. 4145",
-    address: "100 West College Drive, Building A, Avon Park, FL 33825",
+    phone: "863-452-3858",
+    address: "100 West College Drive Building A, Avon Park, FL 33825",
     website: "https://tchsonline.org/services/the-florida-center-for-addictions-and-dual-disorders/",
-    eligibility: "18+. Diagnosed substance dependence and mental health disorder. Emotional stability, no homicidal/suicidal ideation in past 60 days. Must be ambulatory and tobacco-free.",
-    notes: "Must complete admissions packet. Must participate in all four phases including 90-day transitional housing.",
-    lat: 27.56782, lng: -81.503154
+    eligibility: "18+. Diagnosed Substance Dependence Disorder AND Mental Health Disorder. Nicotine/tobacco free.",
+    crisis: false, lat: 27.56782, lng: -81.50315
   },
   {
-    name: "Foundcare Belle Glade",
-    desc: "Free HIV testing, healthcare, dental care. Infectious disease, on-site lab, medical case management, and Ryan White services.",
+    name: "Foundcare — Belle Glade",
+    desc: "Free HIV testing, healthcare and dental care, infectious disease, medical case management, Ryan White Services.",
     services: ["Medical"],
-    phone: "(561) 432-5849",
+    phone: "561-432-5849",
     address: "1500 NW Avenue L, Suite A, Belle Glade, FL 33430",
     website: "https://foundcare.org/who-we-are/locations.html",
-    eligibility: "Sliding scale fees based on income.",
-    notes: "",
-    lat: 26.696413, lng: -80.682677
+    eligibility: "Sliding scale fees.",
+    crisis: false, lat: 26.696413, lng: -80.682677
   },
   {
-    name: "Foundcare Palm Springs",
-    desc: "Free HIV testing, pediatric/adult primary care, chronic disease management, behavioral health, dentistry, lab, women's health, mammography, X-rays, pharmacy.",
+    name: "Foundcare — Palm Springs",
+    desc: "Free HIV testing, primary care, chronic disease management, dentistry, behavioral health, women's health, mammography, pharmacy.",
     services: ["Medical"],
-    phone: "(561) 432-5849",
+    phone: "561-432-5849",
     address: "2330 S. Congress Avenue, Palm Springs, FL 33406",
     website: "https://foundcare.org/who-we-are/locations.html",
-    eligibility: "Sliding scale fees based on income.",
-    notes: "",
-    lat: 26.641556, lng: -80.087669
+    eligibility: "Sliding scale fees.",
+    crisis: false, lat: 26.641556, lng: -80.087669
   },
   {
-    name: "Foundcare West Palm Beach",
+    name: "Foundcare — West Palm Beach",
     desc: "Behavioral health services and adult primary care.",
     services: ["Medical"],
-    phone: "(561) 863-7800",
+    phone: "561-863-7800",
     address: "5730 Corporate Way #100, West Palm Beach, FL 33407",
     website: "https://foundcare.org/who-we-are/locations.html",
-    eligibility: "Sliding scale fees based on income.",
-    notes: "",
-    lat: 26.762724, lng: -80.090496
+    eligibility: "Sliding scale fees.",
+    crisis: false, lat: 26.762724, lng: -80.090496
   },
   {
-    name: "Foundcare Greenwood",
-    desc: "Pediatric and adult primary care, dentistry, chronic disease management, behavioral health, lab, women's health.",
+    name: "Foundcare — Greenacres",
+    desc: "Free HIV testing, healthcare and dental care.",
     services: ["Medical"],
-    phone: "(561) 472-3022",
-    address: "3501 Broadway, Riviera Beach, FL 33404",
-    website: "https://foundcare.org/who-we-are/locations.html",
-    eligibility: "Sliding scale fees based on income.",
-    notes: "",
-    lat: 26.7905953, lng: -80.0551645
-  },
-  {
-    name: "Foundcare North Palm Beach",
-    desc: "Medical services, infectious disease, behavioral health, Ryan White, and medical case management.",
-    services: ["Medical"],
-    phone: "(561) 432-5849",
-    address: "840 US Highway 1, Suite 120, North Palm Beach, FL 33408",
-    website: "https://foundcare.org/who-we-are/locations.html",
-    eligibility: "Sliding scale fees based on income.",
-    notes: "",
-    lat: 26.8234216, lng: -80.059636
-  },
-  {
-    name: "Foundcare Greenacres",
-    desc: "Free HIV testing, healthcare, and dental care provider.",
-    services: ["Medical"],
-    phone: "(561) 432-5849",
+    phone: "561-432-5849",
     address: "5205 Greenwood Ave, Suite 150, Greenacres, FL",
     website: "https://foundcare.org/who-we-are/locations.html",
-    eligibility: "Sliding scale fees based on income.",
-    notes: "",
-    lat: 26.7578211, lng: -80.0611156
+    eligibility: "Sliding scale fees.",
+    crisis: false, lat: 26.7578211, lng: -80.0611156
   },
   {
-    name: "Foundcare Riviera Beach",
-    desc: "Pediatric and adult primary care, dentistry, chronic disease management, behavioral health, lab, women's health.",
+    name: "Foundcare — Riviera Beach",
+    desc: "Pediatric and adult primary care, dentistry, chronic disease management, behavioral health, women's health.",
     services: ["Medical"],
-    phone: "(561) 472-3022",
+    phone: "561-472-3022",
     address: "3501 Broadway, Riviera Beach, FL 33404",
     website: "https://foundcare.org/who-we-are/locations.html",
-    eligibility: "Sliding scale fees based on income.",
-    notes: "",
-    lat: 26.77875, lng: -80.055316
+    eligibility: "Sliding scale fees.",
+    crisis: false, lat: 26.7905953, lng: -80.0551645
   },
   {
-    name: "Foundcare Yolette Bonnet Center (Okeechobee)",
-    desc: "Pediatric, adult, and geriatric primary care, chronic disease management, infectious disease, behavioral health, women's health, lab, pharmacy.",
+    name: "Foundcare — North Palm Beach",
+    desc: "Medical services, infectious disease, behavioral health, Ryan White, medical case management.",
     services: ["Medical"],
-    phone: "(561) 660-5468",
+    phone: "561-432-5849",
+    address: "840 US Highway 1, Suite 120, North Palm Beach, FL 33408",
+    website: "https://foundcare.org/who-we-are/locations.html",
+    eligibility: "Sliding scale fees.",
+    crisis: false, lat: 26.8234216, lng: -80.059636
+  },
+  {
+    name: "Foundcare Yolette Bonnet Center (Okeechobee Blvd)",
+    desc: "Pediatric, adult, geriatric primary care, chronic disease management, behavioral health, women's health, pharmacy.",
+    services: ["Medical"],
+    phone: "561-660-5468",
     address: "5867 Okeechobee Blvd, West Palm Beach, FL 33417",
     website: "https://foundcare.org/who-we-are/locations.html",
-    eligibility: "Sliding scale fees based on income.",
-    notes: "",
-    lat: 26.7081158, lng: -80.134202
+    eligibility: "Sliding scale fees.",
+    crisis: false, lat: 26.7081158, lng: -80.134202
   },
   {
-    name: "FoundCare Boynton Beach",
-    desc: "Free HIV testing, pharmacy, adult primary care, women's health, chronic disease management, lab, behavioral health. Staff speaks French, Haitian, Spanish, Creole.",
+    name: "FoundCare — Boynton Beach",
+    desc: "Free HIV testing, pharmacy, primary care, women's health, behavioral health, medical case management, Ryan White. Staff speaks French, Haitian, Spanish, Creole.",
     services: ["Medical"],
-    phone: "(561) 432-5849",
+    phone: "561-432-5849",
     address: "1901 S. Congress Avenue, Suite 100, Boynton Beach, FL 33426",
     website: "https://foundcare.org/who-we-are/locations.html",
-    eligibility: "No requirements; must fill out intake forms. Sliding scale fees.",
-    notes: "Staff speaks French, Haitian, Spanish, and Creole.",
-    lat: 26.5113575, lng: -80.0909431
+    eligibility: "No requirements. Sliding scale fees.",
+    crisis: false, lat: 26.5113575, lng: -80.0909431
   },
   {
     name: "Genesis Community Health",
-    desc: "Community health clinic offering medical, dental, and behavioral health services.",
+    desc: "Community health clinic — medical, dental, and behavioral health.",
     services: ["Medical","Mental Health"],
-    phone: "(561) 735-7553",
+    phone: "561-735-7553",
     address: "709 S. Federal Highway, Suite 3, Boynton Beach, FL 33435",
     website: "https://gencomhealth.org/",
     eligibility: "Proof of income and no health insurance. Accepts Medicare and Medicaid.",
-    notes: "Flexible payment options.",
-    lat: 26.521398, lng: -80.058625
+    crisis: false, lat: 26.521398, lng: -80.058625
   },
   {
     name: "Goodwill Gulfstream Justice Services",
-    desc: "Re-entry services provider focused on youth 8-18 who would otherwise be court-ordered to juvenile detention.",
-    services: ["Reentry","Mental Health","Housing","Referrals"],
+    desc: "Re-entry services provider — placement assistance, case management, referrals. Youth focus (ages 8–18).",
+    services: ["Reentry","Mental Health","Housing"],
     phone: "561-848-7200",
     address: "1715 Tiffany Drive East, West Palm Beach, FL 33407",
     website: "https://goggi.org/justice-services/",
-    eligibility: "Ages 8 to 18, who would otherwise be court-ordered to juvenile detention (DJJ).",
-    notes: "Focus on youth programs for those 8-18.",
-    lat: 26.754451, lng: -80.081421
+    eligibility: "Ages 8 to 18 who would otherwise be court-ordered to juvenile detention.",
+    crisis: false, lat: 26.754451, lng: -80.081421
   },
   {
-    name: "Recovery In Tune",
+    name: "Recovery In Tune (Davie)",
     desc: "Therapy, medication-assisted treatment, partial hospitalization, inpatient and outpatient services.",
     services: ["Mental Health","Substance Use"],
-    phone: "(954) 738-4290",
+    phone: "954-738-4290",
     address: "6530 Griffin Road, Davie, FL 33314",
     website: "https://www.recoveryintune.com/",
     eligibility: "Addiction and/or mental health condition. Insurance required (majority accepted).",
-    notes: "",
-    lat: 26.064541, lng: -80.234024
+    crisis: false, lat: 26.064541, lng: -80.234024
   },
   {
-    name: "Recovery At The Sea",
+    name: "Recovery at the Sea",
     desc: "Medication-assisted treatment, partial hospitalization, inpatient and outpatient services.",
     services: ["Substance Use","Mental Health"],
-    phone: "(877) 207-5033",
+    phone: "877-207-5033",
     address: "2801 SE Martin Square, Corporate Pkwy, Stuart, FL 34994",
     website: "https://rbsrehab.com/",
     eligibility: "Insurance required (majority accepted).",
-    notes: "Call (833) 613-0704 for admissions.",
-    lat: 27.170577, lng: -80.231153
+    crisis: false, lat: 27.170577, lng: -80.231153
   },
   {
     name: "Harmony Health Group",
-    desc: "Substance use and mental health treatment center offering inpatient, outpatient, and sober living.",
+    desc: "Substance use and mental health treatment — inpatient, outpatient, and sober living programs.",
     services: ["Substance Use","Mental Health"],
-    phone: "(833) 613-0704",
+    phone: "833-613-0704",
     address: "616 SE Central Pkwy, Stuart, FL 34994",
     website: "https://www.harmonyrecoverygroup.com/about-us/",
     eligibility: "Addiction and/or mental health condition. Insurance required.",
-    notes: "Also has a sober living program.",
-    lat: 27.179733, lng: -80.245369
+    crisis: false, lat: 27.179733, lng: -80.245369
   },
   {
     name: "Healing Properties",
     desc: "Sober living recovery residence for men in recovery from substance use.",
     services: ["Substance Use","Housing"],
-    phone: "(561) 563-8882",
+    phone: "561-563-8882",
     address: "44 SW 4th Ave, Delray Beach, FL 33444",
     website: "https://healingproperties.org/",
     eligibility: "Men in recovery from substance use (sober men).",
-    notes: "Contact for information about admissions.",
-    lat: 26.460237, lng: -80.07742
+    crisis: false, lat: 26.460237, lng: -80.07742
   },
   {
     name: "Health Care District of Palm Beach County",
-    desc: "Publicly funded agency providing an array of healthcare services. Serves mostly low-income and uninsured community members.",
+    desc: "Publicly funded agency providing healthcare services to low-income and uninsured community members.",
     services: ["Medical"],
-    phone: "561-966-7144 | Eligibility: 561-642-1000",
+    phone: "561-966-7144",
     address: "1515 N. Flagler Drive, Suite 101, West Palm Beach, FL 33401",
     website: "https://www.hcdpbc.org/about-us",
-    eligibility: "Not required to be insured. Serves mostly low-income and uninsured individuals.",
-    notes: "Most halfway house clients eligible immediately. Some specialty surgery approved.",
-    lat: 26.72623, lng: -80.050999
+    eligibility: "Not required to be insured — serves mostly low-income and uninsured individuals.",
+    crisis: false, lat: 26.72623, lng: -80.050999
   },
   {
-    name: "Henderson Behavioral Health",
-    desc: "Psychiatric, youth/adult residential, case management, and crisis services. 24/7 mobile response team available.",
-    services: ["Mental Health","Housing","Family/Child Services","Referrals","Employment","Medical"],
-    phone: "Crisis: 954.463.0911 | Walk-in: 954.606.0911 | Scheduling: 954.530.0714",
+    name: "Henderson Behavioral Health (Lauderdale Lakes)",
+    desc: "Psychiatric, youth/adult residential, case management. 24/7 crisis mobile response team available.",
+    services: ["Mental Health","Housing","Family/Child Services","Employment"],
+    phone: "954-463-0911",
     address: "4720 N State Rd 7, Lauderdale Lakes, FL 33319",
     website: "https://www.hendersonbh.org/",
-    eligibility: "Adults 18+ with behavioral health and/or substance use issues needing crisis support. Intakes M-F 8AM-4PM walk-in.",
-    notes: "For Broward County residents.",
-    lat: 26.182876, lng: -80.20224
+    eligibility: "Adults 18+ with behavioral health/substance use issues in crisis. Broward County residents.",
+    crisis: true, lat: 26.182876, lng: -80.20224
   },
   {
-    name: "Henderson FACT Team",
-    desc: "Community-based intensive case management and psychiatric services for those living with serious mental illness.",
+    name: "Henderson FACT Team (Palm Beach Gardens)",
+    desc: "Community-based intensive case management and psychiatric services for those living with Serious Mental Illness (SMI).",
     services: ["Mental Health"],
     phone: "561-649-6500",
     address: "7721 N Military Trail, Suite 3, Palm Beach Gardens, FL 33410",
     website: "https://www.hendersonbh.org/services/community-support/",
-    eligibility: "For Broward County residents. Must place if person needs housing.",
-    notes: "Process takes time.",
-    lat: 26.799581, lng: -80.106554
-  },
-  {
-    name: "Hogar CREA — Jacksonville",
-    desc: "Residential treatment program for largely Spanish-speaking population. Program involves work in a bakery.",
-    services: ["Substance Use"],
-    phone: "904-346-1772",
-    address: "1418 Lane Ave. North, Jacksonville, FL 32254",
-    website: "",
-    eligibility: "Male adults. Must be able to work. No severe mental illness.",
-    notes: "Program involves work in a bakery.",
-    lat: 30.340813, lng: -81.752709
+    eligibility: "Broward County residents with SMI. Housing placement process takes time.",
+    crisis: false, lat: 26.799581, lng: -80.106554
   },
   {
     name: "Hogar CREA — Orlando",
-    desc: "Residential treatment program for largely Spanish-speaking population. Program involves work in a bakery.",
+    desc: "Residential substance abuse treatment — largely Spanish-speaking population. Program involves work in a bakery.",
     services: ["Substance Use"],
     phone: "407-240-6464",
     address: "3030 Eunice Avenue, Orlando, FL 32808",
     website: "https://www.hogarcreaflorida.com/about-us",
-    eligibility: "Male adults. Must be able to work. No severe mental illness.",
-    notes: "Program involves work in a bakery.",
-    lat: 28.583304, lng: -81.423729
+    eligibility: "Male adults. Must be able to work. Cannot have a severe mental illness.",
+    crisis: false, lat: 28.583304, lng: -81.423729
   },
   {
-    name: "House of Hope",
-    desc: "Residential treatment program for those sentenced to 6-month non-secure or 12-month long-term felony probation condition.",
+    name: "House of Hope (Fort Lauderdale)",
+    desc: "Residential substance abuse treatment — 6-month non-secure or 12-month long-term as condition of felony probation.",
     services: ["Substance Use"],
-    phone: "954.524.8989 ext. 1006",
+    phone: "954-524-8989",
     address: "908 SW 1st, Fort Lauderdale, FL 33130",
     website: "https://houseofhope.org/",
-    eligibility: "Must be sentenced to 6-month non-secure or 12-month long-term sentence as condition of felony probation.",
-    notes: "Must complete intake form.",
-    lat: 26.120867, lng: -80.153821
+    eligibility: "Must be sentenced to 6-month non-secure or 12-month long-term program as condition of felony probation.",
+    crisis: false, lat: 26.120867, lng: -80.153821
   },
   {
     name: "Ignite Recovery Center",
-    desc: "Intensive outpatient, inpatient, and partial hospitalization services for substance use recovery.",
+    desc: "Intensive outpatient, inpatient, and partial hospitalization services for substance use.",
     services: ["Substance Use","Housing"],
-    phone: "(888) 977-4850",
+    phone: "888-977-4850",
     address: "4850 W Oakland Park Blvd Suite 257, Lauderdale Lakes, FL 33313",
     website: "https://igniterecovery.org/",
-    eligibility: "Must have insurance. In recovery from substance use.",
-    notes: "",
-    lat: 26.163069, lng: -80.216267
+    eligibility: "Must have insurance; in recovery from substance use.",
+    crisis: false, lat: 26.163069, lng: -80.216267
   },
   {
-    name: "Integrated Health",
-    desc: "PHP, IOP, health clinic, ALF, outpatient mental health and substance abuse treatment for juveniles and adults. Includes medication management.",
-    services: ["Mental Health","Substance Use","Housing","Reentry","Referrals"],
+    name: "Integrated Health (West Palm Beach)",
+    desc: "PHP, IOP, Health Clinic, ALF, outpatient mental health and substance abuse for juveniles and adults, including medication management.",
+    services: ["Mental Health","Substance Use","Housing","Reentry"],
     phone: "561-899-9140",
     address: "800 N Sapodilla Ave, West Palm Beach, FL 33401",
     website: "https://integratedhcs.org/",
-    eligibility: "",
-    notes: "",
-    lat: 26.720139, lng: -80.058385
+    eligibility: "Contact for eligibility.",
+    crisis: false, lat: 26.720139, lng: -80.058385
   },
   {
     name: "Jesus and You Outreach Ministry",
-    desc: "Christian-based no-cost residential facility, 9-12 months. Must be able to work. No psychotropic medications.",
+    desc: "Christian-based no-cost residential facility — 9–12 months.",
     services: ["Substance Use","Housing"],
-    phone: "(561) 842-4276",
+    phone: "561-842-4276",
     address: "2831 Avenue S, Riviera Beach, FL",
     website: "",
     eligibility: "Ability to work required. No psychotropic diagnosis requiring medication.",
-    notes: "",
-    lat: 26.785505, lng: -80.081697
+    crisis: false, lat: 26.785505, lng: -80.081697
   },
   {
     name: "Jewish Association for Residential Care (JARC)",
-    desc: "Services for those with intellectual/developmental disabilities — group homes, work training, etc.",
+    desc: "Services for those with disabilities — group homes, work training, etc.",
     services: ["Housing","Employment"],
     phone: "561-558-2550",
     address: "21160 95th Avenue South, Boca Raton, FL 33428",
     website: "https://jarcfl.org/about/",
     eligibility: "Must have an intellectual or developmental disability.",
-    notes: "",
-    lat: 26.360929, lng: -80.194461
+    crisis: false, lat: 26.360929, lng: -80.194461
   },
   {
     name: "Knowledge is Power Charitable Foundation",
-    desc: "Re-entry, mentoring, substance use treatment, anger management, support groups, parenting classes, driving lessons, batterers' intervention programs.",
+    desc: "Re-entry, mentoring, substance use treatment, anger management, support groups, parenting classes, driving lessons, batterers' intervention.",
     services: ["Reentry","Substance Use"],
     phone: "561-207-2080",
-    address: "1645 Palm Beach Lakes Blvd Suite 1200, West Palm Beach",
+    address: "1645 Palm Beach Lakes Blvd Suite 1200, West Palm Beach, FL",
     website: "https://iamknowledgeispower.com/about-us/",
-    eligibility: "Must be referred. Most insurance or referral from DOC, probation, courts, DCF, or community service providers.",
-    notes: "",
-    lat: 26.725519, lng: -80.081512
+    eligibility: "Must be referred. Accepts most insurance and court-ordered referrals.",
+    crisis: false, lat: 26.725519, lng: -80.081512
   },
   {
     name: "Legacy Behavioral Health Center",
     desc: "Mental health counseling center.",
-    services: ["Mental Health","Referrals"],
+    services: ["Mental Health"],
     phone: "1-888-975-3422",
     address: "581 SW Prima Vista Blvd, Port Saint Lucie, FL 34983",
     website: "https://legacybhc.com/about-us/",
-    eligibility: "Needs referral source. Fill out referral form and email to admissions@legacybhc.com.",
-    notes: "",
-    lat: 27.317711, lng: -80.357959
+    eligibility: "Referral source needed.",
+    crisis: false, lat: 27.317711, lng: -80.357959
   },
   {
-    name: "South Florida Intervention",
-    desc: "Mental health counseling and life recovery coaching, specializing in domestic violence and anger management court programs.",
-    services: ["Mental Health"],
-    phone: "561-279-2080",
-    address: "3200 N. Federal HWY Suite 206-9, Boca Raton, FL 33431",
-    website: "",
-    eligibility: "No requirements.",
-    notes: "Unclear whether the center is still open as of 7/7/2025.",
-    lat: 26.380808, lng: -80.075883
-  },
-  {
-    name: "Mental Health America: Peer Place Well Being Center",
-    desc: "Drop-in center for mindfulness, art, music, group support, and one-on-one peer support mentoring.",
-    services: ["Mental Health","Housing","Employment","Education","Medical"],
-    phone: "(561) 832-3755",
+    name: "Mental Health America — Peer Place Well Being Center",
+    desc: "Drop-in wellness center — mindfulness, art, music, group support sessions, one-on-one peer support mentors.",
+    services: ["Mental Health","Housing","Employment","Education"],
+    phone: "561-832-3755",
     address: "4400 N Congress Avenue, Suite 200, West Palm Beach, FL 33407",
     website: "https://mhapalmbeaches.org/",
-    eligibility: "",
-    notes: "Members can drop in any time.",
-    lat: 26.755334, lng: -80.086962
+    eligibility: "No requirements.",
+    crisis: false, lat: 26.755334, lng: -80.086962
   },
   {
-    name: "Mental Health America: Glades Clubhouse",
-    desc: "Members work side-by-side with MHAPB staff on daily activities including food prep, data-entry, media center, and maintenance.",
-    services: ["Mental Health","Housing","Employment","Education","Medical"],
-    phone: "(561) 832-3755",
+    name: "Mental Health America — Glades Clubhouse",
+    desc: "Members work alongside MHAPB staff on daily activities in Belle Glade.",
+    services: ["Mental Health","Housing","Employment","Education"],
+    phone: "561-832-3755",
     address: "1101 W Ave A, Belle Glade, FL 33430",
     website: "https://mhapalmbeaches.org/",
-    eligibility: "",
-    notes: "",
-    lat: 26.68623, lng: -80.679473
+    eligibility: "No requirements.",
+    crisis: false, lat: 26.68623, lng: -80.679473
   },
   {
-    name: "Mental Health America: Fern Street Clubhouse",
-    desc: "Adult and youth programs. Drop-in clubhouse model.",
-    services: ["Mental Health","Housing","Employment","Education","Medical"],
+    name: "Mental Health America — Fern Street Clubhouse",
+    desc: "Adult and youth programs — mental health, employment, education.",
+    services: ["Mental Health","Housing","Employment","Education"],
     phone: "561-832-3755",
     address: "909 Fern Street, West Palm Beach, FL 33401",
     website: "https://mhapalmbeaches.org/",
-    eligibility: "",
-    notes: "",
-    lat: 26.710854, lng: -80.061231
+    eligibility: "No requirements.",
+    crisis: false, lat: 26.710854, lng: -80.061231
   },
   {
     name: "Multilingual Psychotherapy Centers",
-    desc: "Children and family mental health programs including psychiatric services, psychotherapy, and targeted case management.",
-    services: ["Mental Health","Family/Child Services","Referrals"],
+    desc: "Children and family mental health — psychiatric services, psychotherapy, targeted case management.",
+    services: ["Mental Health","Family/Child Services"],
     phone: "561-712-8821",
     address: "1639 Forum Place, West Palm Beach, FL 33401",
     website: "https://mpcipbc.com/",
-    eligibility: "Palm Beach County residents. Form of payment required. Parent/guardian must be present for minor's intake.",
-    notes: "",
-    lat: 26.726945, lng: -80.081408
+    eligibility: "Palm Beach County residents. Form of payment required.",
+    crisis: false, lat: 26.726945, lng: -80.081408
   },
   {
     name: "NAMI of Palm Beach County",
-    desc: "Mental health services offering many support groups. Free mental health support.",
+    desc: "Mental health services and many support groups.",
     services: ["Mental Health"],
     phone: "561-588-3477",
     address: "5205 Greenwood Avenue, Suite 110, West Palm Beach, FL 33407",
     website: "https://namipbc.org/about-nami-palm-beach-county/",
     eligibility: "No requirements.",
-    notes: "",
-    lat: 26.75782, lng: -80.060982
+    crisis: false, lat: 26.75782, lng: -80.060982
   },
   {
     name: "New Horizons Outpatient Services",
-    desc: "Mental health and substance abuse treatment including case management and psychiatric services for adults and children.",
-    services: ["Mental Health","Referrals","Substance Use"],
+    desc: "Mental health and substance abuse treatment — case management, psychiatric services for adults and children.",
+    services: ["Mental Health","Substance Use"],
     phone: "772-221-4088",
     address: "1111 SE Federal Hwy #230, Stuart, FL 34994",
     website: "https://www.nhtcinc.org/",
-    eligibility: "Insurance or method of payment. Registration form required.",
-    notes: "For Martin County residents.",
-    lat: 27.18964, lng: -80.248352
+    eligibility: "Martin County residents. Insurance or payment required.",
+    crisis: false, lat: 27.18964, lng: -80.248352
   },
   {
-    name: "New Path Halfway House",
-    desc: "Halfway house for women. $225/week rent plus $300 administrative fee. Will accept HOT team funding.",
+    name: "New Path Halfway House (Women)",
+    desc: "Halfway house for women. Weekly rent $225 + $300 admin fee. Accepts HOT team funding through Lewis Center.",
     services: ["Substance Use","Housing"],
-    phone: "(561) 255-0011",
+    phone: "561-255-0011",
     address: "413 N 5th St APT A, Lantana, FL 33462",
     website: "https://www.facebook.com/NewPathHalfwayHouse/",
     eligibility: "Must complete interview and agree to personal belonging search. Means to pay $225/week.",
-    notes: "Will accept HOT team funding through the Lewis Center.",
-    lat: 26.587448, lng: -80.055658
-  },
-  {
-    name: "Organization for Family Improvement",
-    desc: "Provides therapy, anger management, domestic violence groups, and parenting classes. Sliding scale fee.",
-    services: ["Mental Health"],
-    phone: "(561) 515-5347",
-    address: "2701 W Oakland Park Blvd, Fort Lauderdale, FL 33311",
-    website: "https://organization-for-family-improvement.square.site/",
-    eligibility: "Has sliding scale fee.",
-    notes: "",
-    lat: 26.163069, lng: -80.216267
+    crisis: false, lat: 26.587448, lng: -80.055658
   },
   {
     name: "Palm Beach County Food Bank",
     desc: "Provides food assistance and helps with applying for SNAP benefits.",
     services: ["Food","Benefits"],
-    phone: "561.670.2518",
+    phone: "561-670-2518",
     address: "701 Boutwell Road, Lake Worth Beach, FL 33461",
     website: "https://www.pbcfoodbank.org/",
     eligibility: "No requirements.",
-    notes: "",
-    lat: 26.625311, lng: -80.076796
+    crisis: false, lat: 26.625311, lng: -80.076796
   },
   {
-    name: "Project SOAR",
-    desc: "Sober living residence for men 18+. 125 beds in several Fort Lauderdale locations. Assists with benefit reinstatement.",
+    name: "Planned Parenthood (West Palm Beach)",
+    desc: "Healthcare provider — women's health services.",
+    services: ["Medical"],
+    phone: "561-296-4919",
+    address: "2300 N Florida Mango Road, West Palm Beach, FL 33409",
+    website: "https://www.plannedparenthood.org/",
+    eligibility: "Women only. Note: new policy may block Medicaid use — contact to verify.",
+    crisis: false, lat: 26.694107, lng: -80.078396
+  },
+  {
+    name: "Project SOAR (Fort Lauderdale)",
+    desc: "Sober living residence for men. 125 beds in multiple locations. $180–205/week.",
     services: ["Substance Use","Housing"],
     phone: "954-900-9980",
     address: "1231 NE 15th Ave, Fort Lauderdale, FL 33304",
     website: "https://www.projectsoar.us/about-us",
-    eligibility: "18+. Must be employed, job-seeking, collecting benefits, or enrolled in education. $180-205/week.",
-    notes: "Larry Bisnett Scholarship Award available. Will assist with reinstatement of benefits.",
-    lat: 26.141968, lng: -80.129158
+    eligibility: "18+. Must be employed, seeking work, collecting benefits, or enrolled in education.",
+    crisis: false, lat: 26.141968, lng: -80.129158
   },
   {
     name: "Rebel Recovery Community Center",
-    desc: "Recovery community center for people struggling with substance use. Peer/case management services, drop-in accessible.",
-    services: ["Housing","Substance Use"],
-    phone: "(561) 508-8388",
+    desc: "Recovery community center for people struggling with substance use. Drop-in peer/case management. Not housing.",
+    services: ["Substance Use"],
+    phone: "561-508-8388",
     address: "2110 N Florida Mango Rd, West Palm Beach, FL 33409",
     website: "https://pbc.rebelrco.org/",
-    eligibility: "No requirements. Drop-in for anyone needing peer/case management services.",
-    notes: "",
-    lat: 26.695377, lng: -80.078064
+    eligibility: "No requirements — drop-in accessible.",
+    crisis: false, lat: 26.695377, lng: -80.078064
   },
   {
     name: "Restoration Destination",
     desc: "Transitional housing for people returning from incarceration.",
     services: ["Housing","Employment","Reentry"],
-    phone: "(561) 924-5556",
+    phone: "561-924-5556",
     address: "120 Pelican Lake Dr., Pahokee, FL 33476",
     website: "https://restorationdestination.org/",
-    eligibility: "",
-    notes: "",
-    lat: 26.812518, lng: -80.653585
-  },
-  {
-    name: "Royal Meadows Group Home",
-    desc: "Group home for children.",
-    services: ["Housing","Employment"],
-    phone: "561-707-1469",
-    address: "600 Vossler Avenue, West Palm Beach, FL 33413",
-    website: "",
-    eligibility: "Children only.",
-    notes: "",
-    lat: 26.69093, lng: -80.09305
+    eligibility: "Contact for eligibility.",
+    crisis: false, lat: 26.812518, lng: -80.653585
   },
   {
     name: "FTL Salvation Army Adult Rehabilitation Center",
-    desc: "Reentry and mental health services. 6-month residential work-treatment program with counseling and employment skills.",
+    desc: "Reentry and mental health residential program — work therapy, counseling, life skills.",
     services: ["Reentry","Mental Health"],
-    phone: "954-463-3725 ext. 3",
+    phone: "954-463-3725",
     address: "1901 W Broward Blvd, Ft. Lauderdale, FL 33312",
     website: "https://southernusa.salvationarmy.org/arc-south/ft-lauderdale",
-    eligibility: "Age 21-65. Pass drug test/breathalyzer. Able to work therapy 8hrs/day. Participate in all program activities.",
-    notes: "",
-    lat: 26.123108, lng: -80.166626
-  },
-  {
-    name: "FT Myers Salvation Army Adult Rehabilitation Center",
-    desc: "6-month residential work-treatment program with individual/group therapy and employment skills. DOC probation bed available.",
-    services: ["Reentry","Mental Health"],
-    phone: "239-332-0140",
-    address: "2400 Edison Ave, Fort Myers, FL 33901",
-    website: "https://southernusa.salvationarmy.org/arc-south/ft-lauderdale",
-    eligibility: "Age 21-65. Pass drug test/breathalyzer. Able to work 8hrs/day. Participate in all program activities.",
-    notes: "Ft. Myers location is DOC probation bed. Male and female.",
-    lat: 26.633064, lng: -81.863849
+    eligibility: "Age 21–65. Pass drug test and breathalyzer. Able to work up to 8 hours/day.",
+    crisis: false, lat: 26.123108, lng: -80.166626
   },
   {
     name: "Sandy Pines Residential Treatment Center",
@@ -1807,437 +1221,347 @@ const RESOURCES = [
     address: "11301 S.E. Tequesta Terrace, Jupiter, FL 33469",
     website: "https://sandypineshospital.com/",
     eligibility: "Private insurance required.",
-    notes: "",
-    lat: 26.97645, lng: -80.103105
+    crisis: false, lat: 26.97645, lng: -80.103105
   },
   {
-    name: "Social Security Administration",
-    desc: "Benefits and Medicare. For those 65+ or with a disability. Walk-in office available weekdays 9AM-4PM.",
+    name: "Social Security Administration (West Palm Beach)",
+    desc: "Benefits and Medicare. Apply for SSA disability, retirement, or replacement Social Security card.",
     services: ["Benefits"],
     phone: "1-800-772-1213",
-    address: "801 Clematis Street, Suite 2, West Palm Beach, FL",
+    address: "801 Clematis Street, Suite 2, West Palm Beach, FL (Open Weekdays 9AM–4PM)",
     website: "https://www.ssa.gov/",
-    eligibility: "65+ or have a disability.",
-    notes: "If issues with card, go in-person to resolve with a representative.",
-    lat: 26.714124, lng: -80.060429
+    eligibility: "65+ or have a disability. See eligibility checker on SSA website.",
+    crisis: false, lat: 26.714124, lng: -80.060429
   },
   {
     name: "Belle Glade South County Mental Health Center",
-    desc: "Mental health and substance abuse treatment including case management and psychiatric services for adults and children.",
-    services: ["Mental Health","Referrals"],
-    phone: "(561) 708-8396 | Crisis: 211",
+    desc: "Mental health and substance abuse treatment — case management and psychiatric services for adults and children.",
+    services: ["Mental Health"],
+    phone: "561-708-8396",
     address: "808 NW Ave D, Belle Glade, FL 33430",
     website: "https://www.scmhcinc.org/",
-    eligibility: "Method of payment required.",
-    notes: "",
-    lat: 26.689205, lng: -80.676367
+    eligibility: "Method of payment required. Call 211 for crisis.",
+    crisis: false, lat: 26.689205, lng: -80.676367
   },
   {
     name: "Delray Beach South County Mental Health Center",
-    desc: "Mental health and substance abuse treatment including case management and psychiatric services for adults and children.",
-    services: ["Mental Health","Referrals"],
-    phone: "(561) 708-8396 | Crisis: 211",
+    desc: "Mental health and substance abuse treatment — case management and psychiatric services for adults and children.",
+    services: ["Mental Health"],
+    phone: "561-708-8396",
     address: "16158 S. Military Trail, Delray Beach, FL 33484",
     website: "https://www.scmhcinc.org/",
-    eligibility: "Method of payment required.",
-    notes: "",
-    lat: 26.436584, lng: -80.122033
+    eligibility: "Method of payment required. Call 211 for crisis.",
+    crisis: false, lat: 26.436584, lng: -80.122033
   },
   {
     name: "St. Anne's Place",
-    desc: "Daytime outreach/resource center for homeless individuals. Breakfast, bag lunches, showers, laundry, food pantry, SNAP assistance, and housing help for families.",
-    services: ["Referrals"],
+    desc: "Daytime outreach/resource center for those experiencing homelessness. Breakfast, bag lunches, showers, laundry, food pantry.",
+    services: ["Housing","Food"],
     phone: "561-805-7708",
-    address: "2107 N. Dixie Hwy, West Palm Beach, FL 33407",
+    address: "2107 N. Dixie Hwy., West Palm Beach, FL 33407",
     website: "https://www.stannplaceoc.org/about",
-    eligibility: "No requirements.",
-    notes: "Hours: M-F 8:30-11:30AM & 1:00-4:00PM. Food pantry Tues/Thurs. Breakfast M-F 8-9AM. Showers/laundry M-F.",
-    lat: 26.732496, lng: -80.053268
-  },
-  {
-    name: "Teen Challenge for Women (Southwest FL)",
-    desc: "12-month residential substance abuse treatment program for adults. Extremely Christian. No MAT, no smoking. Members work 40hrs/week in facility.",
-    services: ["Substance Use"],
-    phone: "(239)-939-7705",
-    address: "1805 Cypress Drive, Fort Myers, FL 33907",
-    website: "https://swfloridawomensrehab.com/",
-    eligibility: "18+. No severe mental illness (depression/anxiety OK). Must work 40hrs/week. No partner contact unless married.",
-    notes: "Bring photo ID, SS card, medical paperwork, TB/HIV/HEP-C tests.",
-    lat: 26.568805, lng: -81.876974
-  },
-  {
-    name: "Teen Challenge for Men (Southwest FL)",
-    desc: "12-month residential substance abuse treatment program for adults. Extremely Christian. No MAT, no smoking.",
-    services: ["Substance Use"],
-    phone: "(239)-275-1974",
-    address: "5646 Seventh Ave, Fort Myers, FL 33907",
-    website: "https://swfloridamensrehab.com/",
-    eligibility: "18+. No severe mental illness (depression/anxiety OK). Must work 40hrs/week. No partner contact unless married.",
-    notes: "Multiple locations within the state. No MAT. No smoking. Attend 25hrs/week of church activities.",
-    lat: 26.568963, lng: -81.879312
+    eligibility: "No requirements. Open M–F 8:30–11:30AM and 1–4PM.",
+    crisis: true, lat: 26.732496, lng: -80.053268
   },
   {
     name: "The Lewis Center",
-    desc: "Homeless resource center run by Palm Beach County. Must have commitment to sobriety and mental health compliance.",
-    services: ["Substance Use"],
+    desc: "County-run homeless resource center. Call to request a referral.",
+    services: ["Substance Use","Housing"],
     phone: "833-442-9455",
     address: "1000 45th Street, West Palm Beach, FL 33407",
     website: "https://homelesscoalitionpbc.org/help-end-homelessness/",
-    eligibility: "Must have commitment to sobriety and mental health compliance.",
-    notes: "Call 833-442-9455 to request a referral into the center.",
-    lat: 26.752539, lng: -80.066933
+    eligibility: "Must have a commitment to sobriety and mental health compliance.",
+    crisis: true, lat: 26.752539, lng: -80.066933
   },
   {
     name: "The Lord's Place Reentry Program",
-    desc: "Post-release reentry services with classes, employment services, and personalized transition plans.",
+    desc: "Post-release reentry services — classes, employment, and personalized transition plans.",
     services: ["Reentry","Mental Health"],
     phone: "561-467-6874",
     address: "2808 N. Australian Ave, West Palm Beach, FL 33407",
     website: "https://thelordsplace.org/what-we-do/reentry-program/",
     eligibility: "Only for people involved in the criminal legal system.",
-    notes: "Accepts referrals first-come first-serve. Contact Vanessa Klein.",
-    lat: 26.7386, lng: -80.067917
+    crisis: false, lat: 26.7386, lng: -80.067917
   },
   {
     name: "True Fast Outreach Ministry",
-    desc: "Ministry providing substance use treatment, employment assistance, family counseling, benefits assistance, computer classes, food pantry.",
-    services: ["Substance Use","Employment","Food","Referrals"],
-    phone: "(561) 594-5689",
+    desc: "Substance use treatment, employment assistance, family counseling, benefits assistance, computer classes, food pantry.",
+    services: ["Substance Use","Employment","Food"],
+    phone: "561-594-5689",
     address: "638 6th Street, West Palm Beach, FL 33401",
     website: "https://www.truefast1.org/",
     eligibility: "DO NOT REFER UNLESS CLIENT IS ASKING.",
-    notes: "Only refer if client specifically requests this resource.",
-    lat: 26.71869, lng: -80.058415
+    crisis: false, lat: 26.71869, lng: -80.058415
   },
   {
     name: "Valley of Love Ministries",
-    desc: "Homeless services, job assistance, and emergency shelter.",
-    services: ["Housing","Food","Referrals"],
-    phone: "(561) 502-8757",
+    desc: "Homeless services and job assistance. Emergency shelter.",
+    services: ["Housing","Food"],
+    phone: "561-502-8757",
     address: "1744 45th Street, West Palm Beach, FL 33407",
     website: "https://www.valleyofloveministries1.org/",
-    eligibility: "",
-    notes: "",
-    lat: 26.752956, lng: -80.080254
+    eligibility: "No requirements listed.",
+    crisis: true, lat: 26.752956, lng: -80.080254
   },
   {
     name: "Vita Nova",
-    desc: "Support for former foster care, LGBTQ+, and other homeless youth (ages 18-25) through housing, education, employment, and life skills.",
+    desc: "Support for former foster care, LGBTQ+, and other homeless youth — housing, education, employment, life skills.",
     services: ["Housing","Education","Employment","Substance Use"],
-    phone: "561.689.0035",
+    phone: "561-689-0035",
     address: "2724 N. Australian Ave., West Palm Beach, FL 33407",
     website: "https://www.vitanovainc.org/our-mission",
-    eligibility: "Ages 18-25. Robust LGBTQ+ population. Independent living services for those who aged out of foster care.",
-    notes: "",
-    lat: 26.738358, lng: -80.067769
+    eligibility: "Ages 18–25. Strong LGBTQ+ population and foster care system alumni.",
+    crisis: false, lat: 26.738358, lng: -80.067769
   },
   {
-    name: "Vocational Rehabilitation (Palm Beach)",
-    desc: "Supports those with disabilities seeking long-term employment through career counseling.",
+    name: "Vocational Rehabilitation",
+    desc: "Long-term employment support and career counseling for people with disabilities.",
     services: ["Employment"],
     phone: "561-624-6957",
     address: "400 North Congress Ave., Suite 300, West Palm Beach, FL 33401",
     website: "https://www.rehabworks.org/about/about-us.html",
     eligibility: "Must have a disability. Referral form required.",
-    notes: "",
-    lat: 26.716032, lng: -80.080727
+    crisis: false, lat: 26.716032, lng: -80.080727
   },
   {
     name: "Walter D. Kelly Treatment Center",
-    desc: "3-6 month co-ed adolescent substance abuse residential treatment center with individual, group, family therapy, and onsite education.",
-    services: ["Substance Use"],
+    desc: "3–6 month co-ed adolescent substance abuse residential treatment — individual, group, and family therapy + onsite education.",
+    services: ["Substance Use","Education"],
     phone: "561-844-9661",
     address: "1041 45th Street, West Palm Beach, FL 33407",
     website: "https://www.drugabusetreatment.org/data-programs/residential/",
     eligibility: "Male or female adolescents.",
-    notes: "",
-    lat: 26.753988, lng: -80.067482
-  },
-  {
-    name: "Norman C. Hayslip Treatment Center",
-    desc: "3-6 month co-ed adolescent substance abuse residential treatment center. Sliding fee scale; no adolescent turned away for inability to pay.",
-    services: ["Substance Use"],
-    phone: "772-464-7575",
-    address: "4590 Selvitz Rd, Ft. Pierce, FL 34981",
-    website: "https://www.drugabusetreatment.org/data-programs/residential/",
-    eligibility: "Male or female adolescents. Sliding fee scale — no one turned away for inability to pay.",
-    notes: "",
-    lat: 27.383843, lng: -80.366294
+    crisis: false, lat: 26.753988, lng: -80.067482
   },
   {
     name: "YWCA of Palm Beach County",
-    desc: "Support for victims of domestic violence including housing, counseling, education. 24-hour crisis line.",
-    services: ["Housing","Education","Mental Health"],
-    phone: "Crisis: (561) 640-9844 | Main: (561) 640-0050",
+    desc: "Support for victims of domestic violence — housing, counseling, education. 24-hour crisis line available.",
+    services: ["Housing","Education","Mental Health","Family/Child Services"],
+    phone: "561-640-0050",
     address: "1016 North Dixie Hwy, West Palm Beach, FL 33401",
     website: "https://ywcapbc.org/who-we-are/",
-    eligibility: "Must have experienced domestic violence/abuse.",
-    notes: "Multiple specialized contact numbers for various services (housing, legal, child protection, etc.).",
-    lat: 26.721794, lng: -80.052861
+    eligibility: "Must be experiencing domestic violence or abuse. 24-hr crisis line: 561-640-9844.",
+    crisis: true, lat: 26.721794, lng: -80.052861
+  },
+  {
+    name: "Mary Rubloff Harmony House (YWCA)",
+    desc: "72-bed secured, year-round, 24-hour shelter for women and their children who are victims of domestic abuse.",
+    services: ["Housing","Mental Health","Employment","Family/Child Services"],
+    phone: "561-640-9844",
+    address: "1016 North Dixie Hwy, West Palm Beach, FL 33401",
+    website: "https://ywcapbc.org/what-we-do/empowering-women/domestic-violence.html",
+    eligibility: "Women and children affected by domestic violence or racism.",
+    crisis: true, lat: 26.7218, lng: -80.0530
   },
   {
     name: "EFK Extraordinary Kids Foundation",
-    desc: "Educational support, medical supplies, and basic necessities for families with special needs children. Weekly Saturday food distribution 11AM-1PM.",
+    desc: "Educational support for families with special needs and medically complex children. Food/supply distribution every Saturday 11AM–1PM.",
     services: ["Family/Child Services","Food"],
     phone: "561-660-6741",
     address: "4220 Lake Worth Road, Lake Worth Beach, FL 33461",
     website: "https://extraordinarykidsfoundation.org/",
-    eligibility: "Special needs and medically complex children from birth to age 21 (Cerebral Palsy, Down syndrome, Spina Bifida, etc.).",
-    notes: "No requirements for weekly meal/supply distribution. Medical assistance requires diagnosis documentation.",
-    lat: 26.616644, lng: -80.109197
+    eligibility: "Special needs and medically complex children from birth to age 21.",
+    crisis: false, lat: 26.616644, lng: -80.109197
   },
   {
-    name: "Children's Medical Services, FLDOH",
+    name: "Children's Medical Services (FLDOH)",
     desc: "Medical, financial, and public health support for children of all abilities in Florida.",
     services: ["Family/Child Services","Medical","Mental Health"],
-    phone: "(877) 822-5203",
+    phone: "877-822-5203",
     address: "5101 Greenwood Ave, West Palm Beach, FL 33407",
     website: "https://www.floridahealth.gov/individual-family-health/child-infant-youth/special-health-care-needs/cms/",
-    eligibility: "Must be a minor living in Florida. All abilities and backgrounds welcome.",
-    notes: "",
-    lat: 26.757317, lng: -80.062841
+    eligibility: "Must be a minor living in Florida — all abilities and backgrounds welcome.",
+    crisis: false, lat: 26.757317, lng: -80.062841
   },
   {
     name: "FAU Community Health Center",
-    desc: "Free health screenings, diabetes self-management training, early identification of illness. Sliding scale for uninsured.",
+    desc: "Early identification of physical, mental, and chronic illness through screenings and diabetes self-management training.",
     services: ["Medical","Mental Health"],
-    phone: "(561) 803-8880",
+    phone: "561-803-8880",
     address: "1650 Osceola Dr, West Palm Beach, FL 33407",
     website: "https://www.faunursing.org/ncha/",
     eligibility: "No requirements. Sliding scale for uninsured.",
-    notes: "",
-    lat: 26.701224, lng: -80.092687
+    crisis: false, lat: 26.701224, lng: -80.092687
   },
   {
-    name: "Florida Community Health Center (WPB)",
-    desc: "Affordable healthcare for adult and pediatric primary care. Sliding scale for uninsured.",
+    name: "Florida Community Health Center (West Palm Beach)",
+    desc: "Affordable healthcare — adult and pediatric primary care.",
     services: ["Medical"],
-    phone: "(561) 612-6524",
+    phone: "561-612-6524",
     address: "5827 Corporate Way, West Palm Beach, FL 33407",
     website: "https://www.fchcinc.org/",
     eligibility: "No requirements. Sliding scale for uninsured.",
-    notes: "",
-    lat: 26.763075, lng: -80.091775
+    crisis: false, lat: 26.763075, lng: -80.091775
   },
   {
-    name: "FL Dept of Health — Belle Glade Health Center",
-    desc: "Public health services for all people in Belle Glade and Florida.",
-    services: ["Medical","Mental Health","Family/Child Services"],
-    phone: "(561) 996-1600",
-    address: "38754 FL-80, Belle Glade, FL 33430",
+    name: "FL Dept. of Health — West Palm Beach Health Center",
+    desc: "Public health center protecting and improving health through integrated state, county, and community efforts.",
+    services: ["Medical","Mental Health"],
+    phone: "561-514-5300",
+    address: "1150 45th St, West Palm Beach, FL 33407",
     website: "",
     eligibility: "No requirements.",
-    notes: "",
-    lat: 26.724644, lng: -80.663843
+    crisis: false, lat: 26.75139, lng: -80.069427
   },
   {
-    name: "FL Dept of Health — Delray Beach Health Center",
-    desc: "Public health services for all people in Delray Beach and Florida.",
+    name: "FL Dept. of Health — Delray Beach Health Center",
+    desc: "Public health center for Delray Beach community.",
     services: ["Medical","Mental Health"],
     phone: "561-274-3100",
     address: "225 S. Congress Ave., Delray Beach, FL 33445",
     website: "",
     eligibility: "No requirements.",
-    notes: "",
-    lat: 26.456797, lng: -80.092967
+    crisis: false, lat: 26.456797, lng: -80.092967
   },
   {
-    name: "FL Dept of Health — Lantana/Lake Worth Health Center",
-    desc: "Public health services for all people in Lantana/Lake Worth and Florida.",
+    name: "FL Dept. of Health — Lantana / Lake Worth Health Center",
+    desc: "Public health center for Lantana and Lake Worth community.",
     services: ["Medical","Mental Health"],
-    phone: "(561) 547-6800",
+    phone: "561-547-6800",
     address: "1250 Southwinds Dr, Lantana, FL 33462",
     website: "",
     eligibility: "No requirements.",
-    notes: "",
-    lat: 26.591856, lng: -80.063187
+    crisis: false, lat: 26.591856, lng: -80.063187
   },
   {
-    name: "FL Dept of Health — West Palm Beach Health Center",
-    desc: "Public health services for all people in West Palm Beach and Florida.",
-    services: ["Medical","Mental Health"],
-    phone: "(561) 514-5300",
-    address: "1150 45th St, West Palm Beach, FL 33407",
+    name: "FL Dept. of Health — Belle Glade Health Center",
+    desc: "Public health center for Belle Glade community.",
+    services: ["Medical","Mental Health","Family/Child Services"],
+    phone: "561-996-1600",
+    address: "38754 FL-80, Belle Glade, FL 33430",
     website: "",
     eligibility: "No requirements.",
-    notes: "",
-    lat: 26.75139, lng: -80.069427
+    crisis: false, lat: 26.724644, lng: -80.663843
   },
   {
     name: "HealthyMe Jupiter",
-    desc: "Free referral programs, counseling, care coordination, and hospital discharge assistance.",
+    desc: "Free of charge — referral programs, counseling, care coordination, and hospital discharge assistance.",
     services: ["Medical"],
-    phone: "(561) 203-7511",
+    phone: "561-203-7511",
     address: "411 W Indiantown Rd, Jupiter, FL 33458",
     website: "https://www.healthymewellness.org/",
     eligibility: "No requirements.",
-    notes: "",
-    lat: 26.934375, lng: -80.100271
+    crisis: false, lat: 26.934375, lng: -80.100271
   },
   {
-    name: "A.M.I.G.O.S. by Jeff Industries",
-    desc: "Social and recreational activities, counseling, advocacy, peer support, and self-advocacy skill building.",
+    name: "AMIGOS by Jeff Industries",
+    desc: "Social and recreational activities, counseling, advocacy, peer support — helping clients navigate community resources.",
     services: ["Mental Health","Reentry"],
     phone: "561-547-9258",
     address: "113 East Coast Ave., Hypoluxo, FL 33462",
     website: "https://jeffindustries.org/about-us/",
     eligibility: "No requirements.",
-    notes: "",
-    lat: 26.570855, lng: -80.055012
+    crisis: false, lat: 26.570855, lng: -80.055012
   },
   {
     name: "Center for Trauma Counseling",
-    desc: "Counseling for children, adolescents, adults, and elders addressing trauma through individual, family, and group sessions.",
+    desc: "Counseling for children, adolescents, adults, and elders addressing trauma — individual, family, and group sessions.",
     services: ["Mental Health"],
-    phone: "(561) 444-3914",
+    phone: "561-444-3914",
     address: "6801 Lake Worth Rd #307, Greenacres, FL 33467",
     website: "https://www.palmbeachmentalhealth.org/",
     eligibility: "No requirements. Affordable rates.",
-    notes: "",
-    lat: 26.618945, lng: -80.152439
+    crisis: false, lat: 26.618945, lng: -80.152439
   },
   {
     name: "Chrysalis Health",
-    desc: "Services for patients with mental health, substance abuse, and community resources. Affordable rates.",
+    desc: "Services for patients with mental health, substance abuse, and community resources.",
     services: ["Mental Health","Substance Use"],
-    phone: "(561) 533-6640",
+    phone: "561-533-6640",
     address: "230 S Dixie Hwy, Lake Worth Beach, FL 33460",
     website: "https://www.chrysalishealth.com/",
     eligibility: "No requirements. Affordable rates.",
-    notes: "",
-    lat: 26.612471, lng: -80.057162
+    crisis: false, lat: 26.612471, lng: -80.057162
   },
   {
-    name: "NAMI Palm Beach County",
-    desc: "Free mental health support, online groups, resources and education.",
+    name: "National Alliance on Mental Illness of Palm Beach County",
+    desc: "Free mental health support, online groups, resources, and education.",
     services: ["Mental Health","Reentry","Education"],
     phone: "561-588-3477",
     address: "5205 Greenwood Avenue, Suite 110, West Palm Beach, FL 33407",
     website: "https://namipbc.org/",
     eligibility: "No requirements.",
-    notes: "",
-    lat: 26.75782, lng: -80.061982
+    crisis: false, lat: 26.75782, lng: -80.060982
   },
   {
-    name: "PACE Center for Girls — Reach Counseling",
-    desc: "Free therapy sessions held in places comfortable to female patients (school, community, or home). For girls ages 11-17.",
+    name: "PACE Center for Girls — 'Reach' Counseling",
+    desc: "Free therapy sessions held in places comfortable for female patients — school, community, or home.",
     services: ["Family/Child Services","Mental Health"],
-    phone: "(561) 472-1990",
+    phone: "561-472-1990",
     address: "1640 S Congress Ave, Palm Springs, FL 33461",
     website: "https://www.pacecenter.org/",
-    eligibility: "Girls ages 11-17.",
-    notes: "Sessions can be held anywhere — school, community, or home.",
-    lat: 26.636682, lng: -80.086837
+    eligibility: "Girls, ages 11–17.",
+    crisis: false, lat: 26.636682, lng: -80.086837
   },
   {
     name: "Ruth & Norman Rales Jewish Family Service",
-    desc: "Food and financial assistance, mental health counseling, senior services, and specialized support for children and families. Open to all.",
+    desc: "Food and financial assistance, mental health counseling, senior services, specialized support for children and families.",
     services: ["Family/Child Services","Food","Mental Health"],
-    phone: "(561) 852-3333",
+    phone: "561-852-3333",
     address: "21300 Ruth and Baron Coleman Blvd, Boca Raton, FL 33428",
     website: "https://ralesjfs.org/",
-    eligibility: "No requirements; do not have to be a member of Judaism.",
-    notes: "",
-    lat: 26.35865, lng: -80.197441
+    eligibility: "No requirements — you do not have to be Jewish.",
+    crisis: false, lat: 26.35865, lng: -80.197441
   },
   {
-    name: "HCD — C.L. Brumback Primary Care & Dental",
-    desc: "Medical and dental primary/preventive care for homeless individuals and families. Sliding scale fees.",
+    name: "HCD — C.L. Brumback Primary Care & Dental Clinics",
+    desc: "Medical and dental primary/preventive care for homeless individuals and families.",
     services: ["Medical","Mental Health"],
-    phone: "(561) 642-1000",
+    phone: "561-642-1000",
     address: "1000 45th St, West Palm Beach, FL 33407",
     website: "https://nhchc.org/grantee-directory/c-l-brumback-primary-care-clinics/",
-    eligibility: "No requirements. Cost depends on income.",
-    notes: "Bring most recent tax return or 3 most recent pay stubs to apply for sliding fee scale.",
-    lat: 26.752747, lng: -80.066754
+    eligibility: "No requirements. Sliding scale based on income.",
+    crisis: false, lat: 26.752747, lng: -80.066754
   },
   {
-    name: "HIV Oral Health Services (Florida Health)",
-    desc: "Basic oral health services as part of comprehensive HIV patient care.",
-    services: ["Medical"],
-    phone: "561-803-7352",
-    address: "West Palm Beach, FL",
-    website: "https://palmbeach.floridahealth.gov/programs-and-services/clinical-and-nutrition-services/dental-health/",
-    eligibility: "Adults meeting specific HIV/AIDS eligibility requirements. Call to verify eligibility.",
-    notes: "",
-    lat: 26.714124, lng: -80.060429
-  },
-  {
-    name: "Mary Rubloff Harmony House (YWCA)",
-    desc: "72-bed secured, year-round, 24-hour shelter for women and children who are victims of domestic abuse.",
-    services: ["Family/Child Services","Housing","Mental Health","Employment"],
-    phone: "(561) 640-9844 | (800) 973-9922",
-    address: "1016 North Dixie Hwy, West Palm Beach, FL 33401",
-    website: "https://ywcapbc.org/what-we-do/empowering-women/domestic-violence.html",
-    eligibility: "Women and children affected by domestic violence.",
-    notes: "",
-    lat: 26.721794, lng: -80.052861
-  },
-  {
-    name: "Victim Services — Domestic Violence (PBC)",
+    name: "Victim Services — Domestic Violence (Palm Beach County)",
     desc: "Free crisis, medical, forensic, counseling, and legal services for domestic violence victims.",
     services: ["Family/Child Services","Mental Health"],
-    phone: "(561) 833-7273",
-    address: "205 N. Dixie, Suite 5.1100, West Palm Beach, FL 33401",
+    phone: "561-833-7273",
+    address: "205 N. Dixie, Suite 5.1100, 5th floor, West Palm Beach, FL 33401",
     website: "https://discover.pbc.gov/publicsafety/victimservices/pages/default.aspx",
     eligibility: "No requirements.",
-    notes: "",
-    lat: 26.715612, lng: -80.054153
+    crisis: true, lat: 26.715612, lng: -80.054153
   },
   {
     name: "Compass Community Center",
-    desc: "Support for LGBTQ+ people and those living with or affected by HIV/AIDS in South Florida.",
+    desc: "Support system for LGBTQ+ people and those living with or affected by HIV/AIDS in South Florida.",
     services: ["Medical","Education","Family/Child Services","Mental Health"],
-    phone: "(561) 533-9699",
+    phone: "561-533-9699",
     address: "201 N Dixie Hwy, Lake Worth Beach, FL 33460",
     website: "https://compasslgbtq.com/",
-    eligibility: "LGBTQ+ people and those living with or affected by HIV and AIDS in South Florida.",
-    notes: "",
-    lat: 26.618107, lng: -80.057635
+    eligibility: "LGBTQ+ people and those living with or affected by HIV/AIDS.",
+    crisis: false, lat: 26.618107, lng: -80.057635
   },
   {
     name: "Health Council of Southeast Florida",
-    desc: "Free HIV testing, medication assistance, resource connection, and health benefits enrollment for those newly diagnosed or out of care.",
-    services: ["Benefits","Medical"],
-    phone: "(561) 844-4220",
+    desc: "Free HIV testing. Medication assistance, resource connection, enrollment in health benefits for those newly diagnosed or out of care.",
+    services: ["Medical","Benefits"],
+    phone: "561-844-4220",
     address: "600 Sandtree Dr STE 101, Palm Beach Gardens, FL 33403",
     website: "https://www.hcsef.org/",
-    eligibility: "",
-    notes: "",
-    lat: 26.802107, lng: -80.097683
+    eligibility: "No requirements listed.",
+    crisis: false, lat: 26.802107, lng: -80.097683
   },
   {
     name: "Healthy Mothers, Healthy Babies",
-    desc: "Free services for women with physical, emotional, economic, and social challenges of pregnancy and infant wellness.",
+    desc: "Free services helping women with physical, emotional, economic, and social challenges of pregnancy and infant wellness.",
     services: ["Family/Child Services","Education","Medical","Mental Health"],
     phone: "561-665-4500",
     address: "842 N. Military Trail, West Palm Beach, FL 33415",
     website: "https://www.hmhbpbc.org/",
     eligibility: "Expectant and current mothers.",
-    notes: "",
-    lat: 26.689585, lng: -80.110876
-  },
-  {
-    name: "Drug Abuse Treatment Association (Youth)",
-    desc: "Outpatient, residential, school-based programs, and TASC for children and adolescents struggling with addiction.",
-    services: ["Education","Medical","Mental Health","Substance Use"],
-    phone: "(561) 743-1034",
-    address: "1016 Clemons St, Jupiter, FL 33477",
-    website: "https://www.drugabusetreatment.org/data-programs/",
-    eligibility: "Children and adolescents struggling with addiction and behavioral health.",
-    notes: "",
-    lat: 26.944291, lng: -80.081664
+    crisis: false, lat: 26.689585, lng: -80.110876
   },
   {
     name: "Community Partners of South Florida",
-    desc: "Behavioral and mental health services, housing services, and community services.",
+    desc: "Behavioral & mental health, housing, and community services.",
     services: ["Education","Housing","Substance Use","Mental Health"],
-    phone: "(561) 841-3500",
+    phone: "561-841-3500",
     address: "2001 Blue Heron Blvd, Riviera Beach, FL 33404",
     website: "https://www.cpsfl.org/",
-    eligibility: "",
-    notes: "",
-    lat: 26.78185, lng: -80.088061
+    eligibility: "Contact for eligibility.",
+    crisis: false, lat: 26.78185, lng: -80.088061
   },
   {
     name: "The Hub — Delray Beach",
@@ -2246,9 +1570,8 @@ const RESOURCES = [
     phone: "561-778-1743",
     address: "5 NE Second St, Delray Beach, FL 33444",
     website: "https://www.pbchub.org/",
-    eligibility: "",
-    notes: "",
-    lat: 26.465485, lng: -80.072972
+    eligibility: "No requirements.",
+    crisis: false, lat: 26.465485, lng: -80.072972
   },
   {
     name: "The Hub — Lake Worth Beach",
@@ -2257,9 +1580,8 @@ const RESOURCES = [
     phone: "561-475-5661",
     address: "1120 Lucerne Ave, Lake Worth Beach, FL 33460",
     website: "https://www.pbchub.org/",
-    eligibility: "",
-    notes: "",
-    lat: 26.616847, lng: -80.060126
+    eligibility: "No requirements.",
+    crisis: false, lat: 26.616847, lng: -80.060126
   },
   {
     name: "The Hub — Belle Glade",
@@ -2268,9 +1590,8 @@ const RESOURCES = [
     phone: "561-593-4972",
     address: "25 Dr Martin Luther King Jr Blvd E, Belle Glade, FL 33430",
     website: "https://www.pbchub.org/",
-    eligibility: "",
-    notes: "",
-    lat: 26.682515, lng: -80.667065
+    eligibility: "No requirements.",
+    crisis: false, lat: 26.682515, lng: -80.667065
   },
   {
     name: "The Hub — Riviera Beach",
@@ -2279,488 +1600,425 @@ const RESOURCES = [
     phone: "561-220-5014",
     address: "1939 Broadway Ave, Riviera Beach, FL 33404",
     website: "https://www.pbchub.org/",
-    eligibility: "",
-    notes: "",
-    lat: 26.77875, lng: -80.055316
+    eligibility: "No requirements.",
+    crisis: false, lat: 26.77875, lng: -80.055316
   },
   {
     name: "Wayside House for Women",
-    desc: "Helps women with drug and alcohol dependence rebuild their lives through recovery programs.",
+    desc: "Helps women with drug and alcohol dependence rebuild their lives. Residential recovery program.",
     services: ["Substance Use","Mental Health","Employment","Education"],
     phone: "561-278-0055",
     address: "378 N.E. Sixth Avenue, Delray Beach, FL 33483",
     website: "https://waysidehouse.net/",
-    eligibility: "Women 18+ seeking recovery from substance use.",
-    notes: "",
-    lat: 26.468531, lng: -80.067461
-  },
-  {
-    name: "Stroll for Well-Being (Morikami Garden Program)",
-    desc: "Therapeutic garden walking program at Morikami Museum. 1-year complimentary membership upon completion. Includes online group meetings.",
-    services: ["Mental Health"],
-    phone: "(561) 501-1048",
-    address: "4000 Morikami Park Road, Delray Beach, FL 33446",
-    website: "https://morikami.org/stroll/",
-    eligibility: "First-come first-served. Apply to participate. Computer/phone with internet required.",
-    notes: "Wednesday meetings: ONLINE only. Saturday meetings: IN-PERSON. Mornings 11AM-12:30PM, Afternoons 1:30-3PM.",
-    lat: 26.42976, lng: -80.156792
+    eligibility: "Women 18 and older seeking recovery from problematic substance use.",
+    crisis: false, lat: 26.468531, lng: -80.067461
   },
   {
     name: "Grey Team: Operation Apollo",
-    desc: "Free health and well-being services for current and prior military service members and veterans.",
+    desc: "Free health and well-being services for current and former service members.",
     services: ["Mental Health"],
-    phone: "(561) 203-3815",
+    phone: "561-203-3815",
     address: "1181 S Rogers Cir #28, Boca Raton, FL 33487",
     website: "https://www.greyteam.org/service-application/",
-    eligibility: "Active duty, Reserve, National Guard, or honorably discharged veterans. DD214 or proof of discharge required.",
-    notes: "Priority given to veterans with mild-moderate TBI or service-related conditions.",
-    lat: 26.403877, lng: -80.111383
+    eligibility: "Active duty, Reserve, National Guard, or U.S. Military Veteran with DD214 or proof of honorable discharge.",
+    crisis: false, lat: 26.403877, lng: -80.111383
   },
   {
     name: "Jeff Industries",
-    desc: "Helps people learn basic skill sets and mental stability to function in a normalized work environment.",
+    desc: "Helps people learn basic skill sets and mental stability to function in a work environment.",
     services: ["Mental Health","Employment","Housing","Substance Use"],
     phone: "561-547-9258",
     address: "113 East Coast Ave., Hypoluxo, FL 33462",
     website: "https://jeffindustries.org/services/",
-    eligibility: "Adults (18+) or at-risk youth with emotional, cognitive, or behavioral challenges.",
-    notes: "",
-    lat: 26.570855, lng: -80.055012
+    eligibility: "Adults 18+ or at-risk youth with emotional, cognitive, or behavioral challenges.",
+    crisis: false, lat: 26.570855, lng: -80.055012
+  },
+  {
+    name: "Drug Abuse Treatment Association (Youth)",
+    desc: "Outpatient, residential, and school-based programs for children and adolescents struggling with addiction.",
+    services: ["Education","Medical","Mental Health","Substance Use"],
+    phone: "561-743-1034",
+    address: "1016 Clemons St, Jupiter, FL 33477",
+    website: "https://www.drugabusetreatment.org/data-programs/",
+    eligibility: "Children and adolescents struggling with addiction and behavioral health.",
+    crisis: false, lat: 26.944291, lng: -80.081664
   },
   {
     name: "Charlie Health",
-    desc: "Intensive outpatient CBT, group therapy, and 10+ therapy types for those recently discharged from ER or inpatient programs.",
+    desc: "CBT, group therapy, and 10+ types of therapy for those recently discharged from inpatient treatment or needing more support.",
     services: ["Mental Health"],
-    phone: "(866) 695-2714",
-    address: "Online (Florida)",
+    phone: "866-695-2714",
+    address: "Online (telehealth)",
     website: "https://www.charliehealth.com/locations/florida",
     eligibility: "Method of payment required.",
-    notes: "Available for those recently discharged from ER or inpatient, or needing more than weekly therapy.",
-    lat: 26.71243, lng: -80.06366
+    crisis: false, lat: 26.712, lng: -80.062
+  },
+  {
+    name: "Organization for Family Improvement",
+    desc: "Therapy, anger management, domestic violence groups, and parenting classes.",
+    services: ["Mental Health"],
+    phone: "561-515-5347",
+    address: "2701 W Oakland Park Blvd, Fort Lauderdale, FL 33311",
+    website: "https://organization-for-family-improvement.square.site/",
+    eligibility: "Sliding scale fee.",
+    crisis: false, lat: 26.173, lng: -80.185
   }
 ];
 
-const ALL_SERVICES = ["All","Housing","Mental Health","Substance Use","Medical","Employment","Food","Reentry","Family/Child Services","Education","Benefits","Referrals"];
-
-const SVC_ICON = {
-  "All": "🔍", "Housing": "🏠", "Mental Health": "🧠", "Substance Use": "💊",
-  "Medical": "🏥", "Employment": "💼", "Food": "🍎", "Reentry": "🔓",
-  "Family/Child Services": "👨‍👩‍👧", "Education": "📚", "Benefits": "📋", "Referrals": "🤝"
-};
-
-const TAG_CLASS = {
-  "Housing": "tag-housing", "Mental Health": "tag-mental", "Substance Use": "tag-substance",
-  "Medical": "tag-medical", "Employment": "tag-employment", "Food": "tag-food",
-  "Reentry": "tag-reentry", "Family/Child Services": "tag-family", "Education": "tag-education",
-  "Benefits": "tag-benefits", "Referrals": "tag-other", "Other": "tag-other"
-};
-
-// Emergency-priority services — shown when "I Need Help Now" is tapped (#4)
-const EMERGENCY_KEYWORDS = ["shelter","emergency","crisis","hotline","24","walk-in","walk in","homeless","food","pantry","meal","24-hour","24 hour"];
-
-let map, markers = [], userLatLng = null, selectedIdx = null, activeFilter = "All", searchVal = "";
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let currentFilter = 'all';
+let currentSearch = '';
 let emergencyMode = false;
+let sidebarCollapsed = false;
+let map, markers = [], markerMap = {};
+let activeCard = null;
 
-// ── HIGH CONTRAST (#10) ──
-function toggleHighContrast() {
-  document.body.classList.toggle('hc');
-  const on = document.body.classList.contains('hc');
-  document.getElementById('hc-btn').innerHTML = on ? '🌑 Normal Mode' : '☀️ High Contrast';
-  try { localStorage.setItem('pbc-hc', on ? '1' : '0'); } catch(e) {}
-}
+// ══════════════════════════════════════════
+// ICONS
+// ══════════════════════════════════════════
+const serviceIcons = {
+  'Housing': '🏠',
+  'Food': '🍎',
+  'Medical': '🏥',
+  'Mental Health': '🧠',
+  'Substance Use': '💊',
+  'Employment': '💼',
+  'Reentry': '🔑',
+  'Family/Child Services': '👨‍👩‍👧',
+  'Education': '🎓',
+  'Benefits': '📋',
+  'Other': '🤝',
+  'Referrals': '📞'
+};
+const serviceColors = {
+  'Housing': '#1565c0',
+  'Food': '#e65100',
+  'Medical': '#2e7d32',
+  'Mental Health': '#6a1b9a',
+  'Substance Use': '#880e4f',
+  'Employment': '#00695c',
+  'Reentry': '#f57f17',
+  'Family/Child Services': '#0d47a1',
+  'Education': '#33691e',
+  'Benefits': '#424242',
+  'Other': '#616161'
+};
+const tagClasses = {
+  'Housing': 'tag-housing',
+  'Food': 'tag-food',
+  'Medical': 'tag-medical',
+  'Mental Health': 'tag-mental',
+  'Substance Use': 'tag-substance',
+  'Employment': 'tag-employment',
+  'Reentry': 'tag-reentry',
+  'Family/Child Services': 'tag-family',
+  'Education': 'tag-education',
+  'Benefits': 'tag-benefits',
+};
 
-// ── EMERGENCY FILTER (#4) ──
-function toggleEmergency() {
-  emergencyMode = !emergencyMode;
-  const fab = document.getElementById('emergency-fab');
-  const label = document.getElementById('emergency-label');
-  if (emergencyMode) {
-    fab.classList.add('active-emergency');
-    label.textContent = 'Show All Resources';
-    document.getElementById('nav-emergency').classList.add('active');
-  } else {
-    fab.classList.remove('active-emergency');
-    label.textContent = 'I Need Help Now';
-    document.getElementById('nav-emergency').classList.remove('active');
+function getIcon(services) {
+  const priority = ['Housing','Food','Medical','Mental Health','Substance Use','Employment','Reentry','Family/Child Services','Education','Benefits'];
+  for (let p of priority) {
+    if (services.includes(p)) return serviceIcons[p] || '🤝';
   }
-  renderList();
+  return '🤝';
 }
-
-// ── BOTTOM NAV (#3) ──
-function bottomNav(tab) {
-  document.querySelectorAll('.bottom-nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('nav-' + tab).classList.add('active');
-  const sidebar = document.getElementById('sidebar');
-  if (tab === 'map') {
-    sidebar.classList.add('collapsed');
-    updateToggleLabel();
-  } else if (tab === 'list' || tab === 'search') {
-    sidebar.classList.remove('collapsed');
-    updateToggleLabel();
-    if (tab === 'search') {
-      setTimeout(() => document.getElementById('search-input').focus(), 350);
-    }
+function getColor(services) {
+  const priority = ['Housing','Food','Medical','Mental Health','Substance Use','Employment','Reentry','Family/Child Services'];
+  for (let p of priority) {
+    if (services.includes(p)) return serviceColors[p] || '#1a3a5c';
   }
-  setTimeout(() => { if (map) map.invalidateSize(); }, 320);
+  return '#1a3a5c';
 }
 
+// ══════════════════════════════════════════
+// MAP INIT
+// ══════════════════════════════════════════
 function initMap() {
-  map = L.map('map', {
-    center: [26.715, -80.057],
-    zoom: 11,
-    zoomControl: true
-  });
+  map = L.map('map', { zoomControl: false }).setView([26.715, -80.053], 11);
+  L.control.zoom({ position: 'topright' }).addTo(map);
 
-  L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://carto.com/" target="_blank">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
-    maxZoom: 19,
-    crossOrigin: true
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 19
   }).addTo(map);
 
-  RESOURCES.forEach((r, i) => {
+  resources.forEach((r, i) => {
     if (!r.lat || !r.lng) return;
+    const color = r.crisis ? '#c0392b' : getColor(r.services);
+    const icon = getIcon(r.services);
+    const markerIcon = L.divIcon({
+      className: '',
+      html: `<div class="custom-marker" style="background:${color}"><span>${icon}</span></div>`,
+      iconSize: [36, 36],
+      iconAnchor: [18, 36],
+      popupAnchor: [0, -38]
+    });
+    const marker = L.marker([r.lat, r.lng], { icon: markerIcon });
 
-    const icon = L.divIcon({
-      className: 'custom-marker-wrap',
-      html: '<div class="custom-marker"></div>',
-      iconSize: [16, 16],
-      iconAnchor: [8, 8],
-      popupAnchor: [0, -12]
+    // Tooltip on hover = address
+    marker.bindTooltip(r.address, { direction: 'top', offset: [0, -36] });
+
+    // Popup content
+    const popupContent = buildPopupHTML(r, i);
+    marker.bindPopup(popupContent, { maxWidth: 320, minWidth: 260 });
+
+    marker.on('click', () => {
+      highlightCard(i);
     });
 
-    const m = L.marker([r.lat, r.lng], { icon }).addTo(map);
-
-    // Tooltip showing name + address on hover (no inline handlers needed)
-    m.bindTooltip(
-      `<strong>${r.name}</strong><br><span style="font-weight:400;font-size:12px">📍 ${r.address || ''}</span>`,
-      { direction: 'top', offset: [0, -10], opacity: 0.97, className: 'marker-tooltip' }
-    );
-
-    // Popup with name, address, description — NO inline onclick
-    m.bindPopup(
-      `<div class="map-popup">
-        <div class="map-popup-name">${r.name}</div>
-        <div class="map-popup-addr">📍 ${r.address || 'Address not listed'}</div>
-        <div class="map-popup-desc">${r.desc.substring(0, 90)}${r.desc.length > 90 ? '…' : ''}</div>
-        <button class="map-popup-btn" data-idx="${i}">View Full Details</button>
-       </div>`,
-      { maxWidth: 300 }
-    );
-
-    // Attach click handler via JS after popup opens — CSP-safe
-    m.on('popupopen', function() {
-      const btn = document.querySelector('.map-popup-btn[data-idx="' + i + '"]');
-      if (btn) {
-        btn.addEventListener('click', function() {
-          openDetail(i);
-          m.closePopup();
-        });
-      }
-    });
-
-    // Single click on marker opens detail directly on mobile, popup on desktop
-    m.on('click', function() {
-      selectedIdx = i;
-      renderList();
-    });
-
-    markers.push({ marker: m, idx: i });
+    marker.addTo(map);
+    markers.push({ marker, resource: r, idx: i });
+    markerMap[i] = marker;
   });
 }
 
-function getUserLocation() {
-  if (!navigator.geolocation) {
-    document.getElementById('location-status').textContent = '📍 Geolocation not supported by your browser.';
-    return;
-  }
-  document.getElementById('location-status').textContent = '📍 Finding your location…';
-  navigator.geolocation.getCurrentPosition(pos => {
-    userLatLng = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-    document.getElementById('location-status').textContent = '📍 Location found — distances shown below';
-    if (userLatLng) {
-      const userIcon = L.divIcon({
-        className: '',
-        html: `<div style="background:#b8860b;border:3px solid white;border-radius:50%;width:16px;height:16px;box-shadow:0 2px 6px rgba(0,0,0,0.4)"></div>`,
-        iconSize: [16, 16], iconAnchor: [8, 8]
-      });
-      L.marker([userLatLng.lat, userLatLng.lng], { icon: userIcon })
-        .addTo(map)
-        .bindPopup('<div style="font-family:Times New Roman;font-size:13px;padding:6px"><strong>Your Location</strong></div>');
-      map.setView([userLatLng.lat, userLatLng.lng], 13);
+function buildPopupHTML(r, i) {
+  const tagsHTML = r.services.slice(0,3).map(s =>
+    `<span class="tag ${tagClasses[s]||'tag-other'}">${serviceIcons[s]||''} ${s}</span>`
+  ).join('');
+
+  const phone = r.phone ? r.phone.replace(/\D/g,'').slice(0,10) : '';
+  const phoneBtn = r.phone ? `<a href="tel:${phone}" class="popup-btn call">📞 Call</a>` : '';
+  const dirBtn = `<a href="#" onclick="openDirections(${r.lat},${r.lng},event)" class="popup-btn directions">🧭 Directions</a>`;
+  const webBtn = r.website ? `<a href="${r.website}" target="_blank" rel="noopener" class="popup-btn web">🌐 Website</a>` : '';
+
+  return `<div class="popup-inner">
+    <div class="popup-title">${r.name}</div>
+    <div class="card-tags" style="margin-bottom:6px">${tagsHTML}</div>
+    <div class="popup-desc">${r.desc}</div>
+    <div class="popup-address">📍 ${r.address}</div>
+    ${r.eligibility ? `<div class="popup-section">Eligibility</div><div class="popup-eligibility">${r.eligibility}</div>` : ''}
+  </div>
+  <div class="popup-actions">${phoneBtn}${dirBtn}${webBtn}</div>`;
+}
+
+function openDirections(lat, lng, e) {
+  if (e) e.preventDefault();
+  const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.userAgent);
+  const url = isMac
+    ? `maps://maps.apple.com/?daddr=${lat},${lng}&dirflg=w`
+    : `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=transit`;
+  window.open(url, '_blank');
+}
+
+// ══════════════════════════════════════════
+// FILTERING & SEARCH
+// ══════════════════════════════════════════
+function filtered() {
+  return resources.filter((r, i) => {
+    if (emergencyMode && !r.crisis) return false;
+    if (currentFilter !== 'all' && !r.services.includes(currentFilter)) return false;
+    if (currentSearch) {
+      const q = currentSearch.toLowerCase();
+      return r.name.toLowerCase().includes(q) ||
+             r.desc.toLowerCase().includes(q) ||
+             r.address.toLowerCase().includes(q) ||
+             r.services.join(' ').toLowerCase().includes(q);
     }
-    renderList();
-  }, () => {
-    document.getElementById('location-status').textContent = '📍 Location access denied.';
-  });
+    return true;
+  }).map((r, _, arr) => resources.indexOf(r));
 }
 
-function haversine(lat1, lng1, lat2, lng2) {
-  const R = 3958.8;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-}
-
-function filterResources() {
-  searchVal = document.getElementById('search-input').value.toLowerCase();
-  renderList();
-}
-
-function setFilter(f) {
-  activeFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.filter === f);
-  });
-  renderList();
-}
-
-function getFiltered() {
-  return RESOURCES.map((r, i) => ({ ...r, idx: i })).filter(r => {
-    if (emergencyMode) {
-      const combined = (r.desc + ' ' + r.eligibility + ' ' + r.notes).toLowerCase();
-      return EMERGENCY_KEYWORDS.some(k => combined.includes(k));
-    }
-    const matchesFilter = activeFilter === "All" || r.services.includes(activeFilter);
-    const matchesSearch = !searchVal ||
-      r.name.toLowerCase().includes(searchVal) ||
-      r.desc.toLowerCase().includes(searchVal) ||
-      r.services.some(s => s.toLowerCase().includes(searchVal)) ||
-      r.address.toLowerCase().includes(searchVal);
-    return matchesFilter && matchesSearch;
-  });
-}
-
-function renderList() {
-  const filtered = getFiltered();
-
-  if (userLatLng) {
-    filtered.sort((a, b) => {
-      const da = haversine(userLatLng.lat, userLatLng.lng, a.lat, a.lng);
-      const db = haversine(userLatLng.lat, userLatLng.lng, b.lat, b.lng);
-      return da - db;
-    });
-  }
-
-  const list = document.getElementById('resource-list');
+function render() {
+  const idxs = filtered();
+  const container = document.getElementById('cards-container');
+  const sheetCards = document.getElementById('sheet-cards');
+  const noResults = document.getElementById('no-results');
   const count = document.getElementById('result-count');
 
-  if (emergencyMode) {
-    count.innerHTML = `🚨 <strong>${filtered.length} resources open now or available 24/7</strong>`;
-    count.style.color = '#c0392b';
-  } else {
-    count.innerHTML = `${filtered.length} resource${filtered.length !== 1 ? 's' : ''} found`;
-    count.style.color = '';
-  }
+  const html = idxs.map((i, delay) => buildCardHTML(i, delay)).join('');
+  container.innerHTML = html;
+  sheetCards.innerHTML = html;
+  noResults.style.display = idxs.length === 0 ? 'block' : 'none';
+  count.textContent = `${idxs.length} resource${idxs.length !== 1 ? 's' : ''}`;
 
-  markers.forEach(({ marker, idx }) => {
-    const shown = filtered.some(r => r.idx === idx);
-    if (shown) {
+  // Update marker visibility
+  markers.forEach(({ marker, resource, idx }) => {
+    if (idxs.includes(idx)) {
       if (!map.hasLayer(marker)) marker.addTo(map);
     } else {
       if (map.hasLayer(marker)) map.removeLayer(marker);
     }
   });
-
-  // Extract first phone number for tap-to-call (#6)
-  function firstPhone(phone) {
-    if (!phone) return null;
-    const m = phone.match(/[\d\(\)\-\.\s]{7,}/);
-    return m ? m[0].replace(/[^\d\+]/g, '') : null;
-  }
-
-  list.innerHTML = filtered.map(r => {
-    const dist = userLatLng ? haversine(userLatLng.lat, userLatLng.lng, r.lat, r.lng) : null;
-    const tags = r.services.slice(0, 3).map(s =>
-      `<span class="tag ${TAG_CLASS[s] || 'tag-other'}">${SVC_ICON[s] || ''} ${s}</span>`
-    ).join('');
-    const ph = firstPhone(r.phone);
-    const phoneHtml = ph ? `<div class="card-phone"><a href="tel:${ph}" style="color:inherit;text-decoration:none" data-call="true">📞 Tap to Call</a></div>` : '';
-    return `
-      <div class="resource-card ${selectedIdx === r.idx ? 'selected' : ''}" data-resource-idx="${r.idx}">
-        <div class="card-name">${r.name}</div>
-        <div class="card-desc">${r.desc}</div>
-        <div class="card-tags">${tags}</div>
-        ${phoneHtml}
-        ${dist !== null ? `<div class="distance-badge">📍 ${dist.toFixed(1)} mi away</div>` : ''}
-      </div>
-    `;
-  }).join('') || `<div class="no-results">No resources match your search.<br>Try a different filter or keyword.</div>`;
 }
 
-function selectResource(idx) {
-  selectedIdx = idx;
-  const r = RESOURCES[idx];
-  const markerObj = markers.find(m => m.idx === idx);
-  if (markerObj) {
-    map.setView([r.lat, r.lng], 14, { animate: true });
-    markerObj.marker.openPopup();
-  }
-  renderList();
-  openDetail(idx);
-}
-
-function openDetail(idx) {
-  const r = RESOURCES[idx];
-  selectedIdx = idx;
-
-  document.getElementById('popup-name').textContent = r.name;
-
-  const tagsHtml = r.services.map(s =>
-    `<span class="tag ${TAG_CLASS[s] || 'tag-other'}" style="font-size:12px;padding:4px 9px;">${SVC_ICON[s] || ''} ${s}</span>`
+function buildCardHTML(i, delay) {
+  const r = resources[i];
+  const tagsHTML = r.services.slice(0,3).map(s =>
+    `<span class="tag ${tagClasses[s]||'tag-other'}">${serviceIcons[s]||''} ${s}</span>`
   ).join('');
-  document.getElementById('popup-tags').innerHTML = tagsHtml;
+  const phone = r.phone ? r.phone.replace(/\D/g,'').slice(0,10) : '';
+  const phoneBtn = r.phone ? `<a href="tel:${phone}" class="card-phone-btn" onclick="event.stopPropagation()"><span class="ph-icon">📞</span>${r.phone}</a>` : '';
+  return `<div class="resource-card" onclick="selectResource(${i})" id="card-${i}" style="animation-delay:${Math.min(delay*0.03,0.3)}s">
+    <div class="card-header">
+      <div class="card-icon">${getIcon(r.services)}</div>
+      <div class="card-title">${r.name}</div>
+    </div>
+    <div class="card-tags">${tagsHTML}</div>
+    <div class="card-desc">${r.desc}</div>
+    ${phoneBtn}
+  </div>`;
+}
 
-  document.getElementById('popup-desc').textContent = r.desc;
-
-  // Call + Directions action buttons (#6 #7)
-  const actionsDiv = document.getElementById('popup-actions');
-  const phoneNum = r.phone ? r.phone.match(/[\d\(\)\-\.\s]{7,}/) : null;
-  const phoneDigits = phoneNum ? phoneNum[0].replace(/[^\d\+]/g, '') : null;
-  const mapsUrl = r.address && r.address !== 'Online (Florida)'
-    ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(r.address)}`
-    : null;
-
-  let actionsBtns = '';
-  if (phoneDigits) {
-    actionsBtns += `<a class="action-btn action-btn-call" href="tel:${phoneDigits}" aria-label="Call ${r.name}">📞 Call Now</a>`;
+function selectResource(i) {
+  const r = resources[i];
+  // Highlight card
+  document.querySelectorAll('.resource-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll(`#card-${i}`).forEach(c => {
+    c.classList.add('selected');
+    c.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+  // Fly to marker and open popup
+  if (markerMap[i]) {
+    map.flyTo([r.lat, r.lng], 15, { duration: 0.8 });
+    setTimeout(() => markerMap[i].openPopup(), 800);
   }
-  if (mapsUrl) {
-    actionsBtns += `<a class="action-btn action-btn-dir" href="${mapsUrl}" target="_blank" rel="noopener" aria-label="Get directions to ${r.name}">🗺️ Get Directions</a>`;
+  // Mobile: show detail panel
+  if (window.innerWidth <= 700) {
+    showDetailPanel(i);
+    mobileNav('map');
   }
-  actionsDiv.innerHTML = actionsBtns;
-  actionsDiv.style.display = actionsBtns ? 'flex' : 'none';
+  activeCard = i;
+}
 
-  const grid = document.getElementById('popup-grid');
-  const infoItems = [];
-  if (r.phone) infoItems.push({ label: '📞 Phone', value: r.phone, full: false });
-  if (r.address) infoItems.push({ label: '📍 Address', value: r.address, full: false });
-  if (r.website) infoItems.push({ label: '🌐 Website', value: `<a href="${r.website}" target="_blank" rel="noopener">${r.website.replace('https://','').replace('http://','').split('/')[0]}</a>`, full: false });
-  if (userLatLng && r.lat && r.lng) {
-    const dist = haversine(userLatLng.lat, userLatLng.lng, r.lat, r.lng);
-    infoItems.push({ label: '📏 Distance', value: `${dist.toFixed(1)} miles from you`, full: false });
-  }
+function highlightCard(i) {
+  document.querySelectorAll('.resource-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll(`#card-${i}`).forEach(c => {
+    c.classList.add('selected');
+    c.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+  if (window.innerWidth <= 700) showDetailPanel(i);
+  activeCard = i;
+}
 
-  grid.innerHTML = infoItems.map(item =>
-    `<div class="info-item${item.full ? ' full' : ''}">
-      <div class="info-label">${item.label}</div>
-      <div class="info-value">${item.value}</div>
-    </div>`
+function showDetailPanel(i) {
+  const r = resources[i];
+  const panel = document.getElementById('detail-panel');
+  const phone = r.phone ? r.phone.replace(/\D/g,'').slice(0,10) : '';
+  const tagsHTML = r.services.map(s =>
+    `<span class="tag ${tagClasses[s]||'tag-other'}">${serviceIcons[s]||''} ${s}</span>`
   ).join('');
 
-  // Requirements & Eligibility
-  const reqSection = document.getElementById('popup-req-section');
-  const reqText = document.getElementById('popup-req');
-  if (r.eligibility) {
-    reqSection.style.display = '';
-    reqText.textContent = r.eligibility;
-  } else {
-    reqSection.style.display = 'none';
-  }
+  document.getElementById('detail-header').innerHTML = `
+    <div class="detail-icon">${getIcon(r.services)}</div>
+    <div class="detail-title">${r.name}</div>
+    <div class="card-tags" style="margin-top:8px">${tagsHTML}</div>
+  `;
+  document.getElementById('detail-body').innerHTML = `
+    <div class="detail-section-label">About</div>
+    <div class="detail-text">${r.desc}</div>
+    <div class="detail-section-label">Address</div>
+    <div class="detail-text">📍 ${r.address}</div>
+    ${r.eligibility ? `<div class="detail-section-label">Eligibility & Requirements</div><div class="detail-elig">${r.eligibility}</div>` : ''}
+  `;
+  const phoneBtn = r.phone ? `<a href="tel:${phone}" class="detail-btn call">📞 Call ${r.phone}</a>` : '';
+  const dirBtn = `<a href="#" onclick="openDirections(${r.lat},${r.lng},event)" class="detail-btn directions">🧭 Get Directions</a>`;
+  const webBtn = r.website ? `<a href="${r.website}" target="_blank" rel="noopener" class="detail-btn web">🌐 Website</a>` : '';
+  document.getElementById('detail-actions').innerHTML = phoneBtn + dirBtn + webBtn;
 
-  const notesSection = document.getElementById('popup-notes-section');
-  const notesText = document.getElementById('popup-notes');
-  if (r.notes) {
-    notesSection.style.display = '';
-    notesText.textContent = r.notes;
-  } else {
-    notesSection.style.display = 'none';
-  }
-
-  document.getElementById('detail-popup').classList.add('open');
-  renderList();
+  panel.style.display = 'flex';
+  requestAnimationFrame(() => panel.classList.add('open'));
 }
 
-function closePopup(e) {
-  if (e.target === document.getElementById('detail-popup')) {
-    closePopupDirect();
-  }
+function closeDetail() {
+  const panel = document.getElementById('detail-panel');
+  panel.classList.remove('open');
+  setTimeout(() => { panel.style.display = 'none'; }, 350);
 }
 
-function closePopupDirect() {
-  document.getElementById('detail-popup').classList.remove('open');
-}
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closePopupDirect();
-});
-
-// ── INIT — wrapped in window load so DOM is fully painted before Leaflet measures ──
-window.addEventListener('load', function() {
-
-  document.getElementById('total-count').textContent = `${RESOURCES.length} Community Resources`;
-
-  // Filter buttons with icons (#5)
-  const filterContainer = document.getElementById('filter-buttons');
-  ALL_SERVICES.forEach(s => {
-    const btn = document.createElement('button');
-    btn.className = `filter-btn${s === 'All' ? ' active' : ''}`;
-    btn.dataset.filter = s;
-    btn.innerHTML = `${SVC_ICON[s] || ''} ${s}`;
-    btn.onclick = () => setFilter(s);
-    filterContainer.appendChild(btn);
-  });
-
-  // Restore high contrast preference (#10)
-  try { if (localStorage.getItem('pbc-hc') === '1') { document.body.classList.add('hc'); document.getElementById('hc-btn').innerHTML = '🌑 Normal Mode'; } } catch(e) {}
-
-  // Fix emergency button — reset to default on load
-  emergencyMode = false;
-
-  try {
-    initMap();
-    renderList();
-  } catch(err) {
-    console.error('Init error:', err);
-    document.getElementById('map').innerHTML =
-      '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-family:Nunito,sans-serif;font-size:16px;color:#1a3557;padding:20px;text-align:center">Map unavailable — please check your connection and reload.</div>';
-    document.getElementById('result-count').textContent = 'Error loading resources — please reload.';
-  }
-
-  // Force Leaflet to recalculate map size after full paint
-  setTimeout(function() { if (map) map.invalidateSize(true); }, 100);
-  setTimeout(function() { if (map) map.invalidateSize(true); }, 500);
-  setTimeout(function() { if (map) map.invalidateSize(true); }, 1500);
-
-  // ── EVENT DELEGATION for sidebar cards (CSP-safe, no inline onclick) ──
-  document.getElementById('resource-list').addEventListener('click', function(e) {
-    if (e.target.closest('a[href^="tel:"]')) return;
-    const card = e.target.closest('[data-resource-idx]');
-    if (card) {
-      const idx = parseInt(card.getAttribute('data-resource-idx'), 10);
-      selectResource(idx);
-    }
-  });
-
-});
-
+// ══════════════════════════════════════════
+// CONTROLS
+// ══════════════════════════════════════════
 function toggleSidebar() {
-  const sidebar = document.getElementById('sidebar');
-  const isMobile = window.innerWidth <= 640;
-  sidebar.classList.toggle('collapsed');
-  if (isMobile) {
-    const collapsed = sidebar.classList.contains('collapsed');
-    document.getElementById('sidebar-toggle').innerHTML =
-      `<span style="font-size:13px;font-weight:700;letter-spacing:0.3px">${collapsed ? '▲ Show Resource List' : '▼ Hide List'}</span>`;
-    setTimeout(() => { if (map) map.invalidateSize(); }, 320);
+  sidebarCollapsed = !sidebarCollapsed;
+  const sb = document.getElementById('sidebar');
+  const btn = document.getElementById('sidebar-toggle-btn');
+  sb.classList.toggle('collapsed', sidebarCollapsed);
+  btn.textContent = sidebarCollapsed ? '▶' : '◀';
+}
+
+function toggleEmergency() {
+  emergencyMode = !emergencyMode;
+  const btn = document.getElementById('emergency-btn');
+  const banner = document.getElementById('emergency-banner');
+  btn.classList.toggle('active', emergencyMode);
+  banner.classList.toggle('visible', emergencyMode);
+  if (emergencyMode) {
+    btn.innerHTML = '✕ Show All Resources';
+    currentFilter = 'all';
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('[data-cat="all"],[data-mcat="all"]').forEach(c => c.classList.add('active'));
   } else {
-    setTimeout(() => { if (map) map.invalidateSize(); }, 300);
+    btn.innerHTML = '🚨 I Need Help Right Now';
+  }
+  render();
+}
+
+function clearEmergency() { if (emergencyMode) toggleEmergency(); }
+
+// Filter chips
+document.querySelectorAll('[data-cat]').forEach(chip => {
+  chip.addEventListener('click', () => {
+    currentFilter = chip.dataset.cat;
+    document.querySelectorAll('[data-cat]').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    emergencyMode = false;
+    document.getElementById('emergency-btn').classList.remove('active');
+    document.getElementById('emergency-btn').innerHTML = '🚨 I Need Help Right Now';
+    document.getElementById('emergency-banner').classList.remove('visible');
+    render();
+  });
+});
+document.querySelectorAll('[data-mcat]').forEach(chip => {
+  chip.addEventListener('click', () => {
+    currentFilter = chip.dataset.mcat;
+    document.querySelectorAll('[data-mcat]').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    render();
+  });
+});
+
+// Search
+document.getElementById('search-input').addEventListener('input', e => {
+  currentSearch = e.target.value;
+  render();
+});
+document.getElementById('mobile-search-input').addEventListener('input', e => {
+  currentSearch = e.target.value;
+  render();
+});
+
+// Mobile nav
+let mobileSheetMode = null;
+function mobileNav(mode) {
+  const sheet = document.getElementById('mobile-sheet');
+  const searchWrap = document.getElementById('mobile-sheet-search-wrap');
+  const filtersWrap = document.getElementById('mobile-sheet-filters-wrap');
+  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('bnav-' + mode)?.classList.add('active');
+
+  if (mode === 'map') {
+    sheet.classList.remove('open');
+    mobileSheetMode = null;
+    return;
+  }
+  searchWrap.style.display = (mode === 'search') ? 'block' : 'none';
+  filtersWrap.style.display = (mode === 'filters') ? 'flex' : 'none';
+  sheet.classList.add('open');
+  mobileSheetMode = mode;
+  if (mode === 'search') {
+    setTimeout(() => document.getElementById('mobile-search-input').focus(), 300);
   }
 }
 
-function updateToggleLabel() {
-  const isMobile = window.innerWidth <= 640;
-  const btn = document.getElementById('sidebar-toggle');
-  const sidebar = document.getElementById('sidebar');
-  const collapsed = sidebar.classList.contains('collapsed');
-  if (isMobile) {
-    btn.innerHTML = `<span style="font-size:13px;font-weight:700;letter-spacing:0.3px">${collapsed ? '▲ Show Resource List' : '▼ Hide List'}</span>`;
-  } else {
-    btn.innerHTML = `<span class="toggle-arrow">${collapsed ? '&#8250;' : '&#8249;'}</span>`;
-  }
-}
-
-window.addEventListener('resize', updateToggleLabel);
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+initMap();
+render();
 </script>
 </body>
 </html>
