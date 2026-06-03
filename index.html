@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1a3557">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src * data: blob:; connect-src * data: blob:;">
 <meta name="description" content="Free community resources in Palm Beach County — shelter, food, health, and more.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -2410,9 +2411,8 @@ function initMap() {
     zoomControl: true
   });
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://carto.com/" target="_blank">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
-    subdomains: 'abcd',
     maxZoom: 19,
     crossOrigin: true
   }).addTo(map);
@@ -2707,8 +2707,15 @@ window.addEventListener('load', function() {
   // Fix emergency button — reset to default on load
   emergencyMode = false;
 
-  initMap();
-  renderList();
+  try {
+    initMap();
+    renderList();
+  } catch(err) {
+    console.error('Init error:', err);
+    document.getElementById('map').innerHTML =
+      '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-family:Nunito,sans-serif;font-size:16px;color:#1a3557;padding:20px;text-align:center">Map unavailable — please check your connection and reload.</div>';
+    document.getElementById('result-count').textContent = 'Error loading resources — please reload.';
+  }
 
   // Force Leaflet to recalculate map size after full paint
   setTimeout(function() { if (map) map.invalidateSize(true); }, 100);
@@ -2726,28 +2733,6 @@ window.addEventListener('load', function() {
   });
 
 });
-
-// ── PWA SERVICE WORKER (#9) ──
-if ('serviceWorker' in navigator) {
-  const swCode = `
-const CACHE = 'pbc-resources-v1';
-const OFFLINE_URLS = [self.location.href || '/'];
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(OFFLINE_URLS)));
-  self.skipWaiting();
-});
-self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))));
-  self.clients.claim();
-});
-self.addEventListener('fetch', e => {
-  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match(e.request))));
-});
-  `.trim();
-  const blob = new Blob([swCode], { type: 'application/javascript' });
-  const swUrl = URL.createObjectURL(blob);
-  navigator.serviceWorker.register(swUrl).catch(() => {});
-}
 
 function toggleSidebar() {
   const sidebar = document.getElementById('sidebar');
