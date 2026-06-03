@@ -17,6 +17,10 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html {
+    height: 100%;
+  }
+
   :root {
     --navy: #1a3557;
     --navy-light: #254a76;
@@ -80,7 +84,8 @@
     font-family: 'Nunito', 'Segoe UI', Arial, sans-serif;
     background: var(--cream);
     color: var(--text-primary);
-    height: 100vh;
+    height: 100%;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -154,6 +159,8 @@
     display: flex;
     flex: 1;
     overflow: hidden;
+    height: calc(100vh - 68px);
+    min-height: 0;
   }
 
   /* Sidebar */
@@ -259,10 +266,12 @@
       transform: rotate(90deg);
     }
     #map {
-      height: 100vh;
+      height: calc(100vh - 68px);
+      width: 100%;
     }
     .app-body {
       flex-direction: column;
+      height: calc(100vh - 68px);
     }
   }
 
@@ -430,6 +439,8 @@
   #map {
     flex: 1;
     z-index: 1;
+    min-height: 300px;
+    background: #f0ece4;
   }
 
   /* Popup overlay */
@@ -2674,35 +2685,46 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closePopupDirect();
 });
 
-// Init
-document.getElementById('total-count').textContent = `${RESOURCES.length} Community Resources`;
+// ── INIT — wrapped in window load so DOM is fully painted before Leaflet measures ──
+window.addEventListener('load', function() {
 
-// Filter buttons with icons (#5)
-const filterContainer = document.getElementById('filter-buttons');
-ALL_SERVICES.forEach(s => {
-  const btn = document.createElement('button');
-  btn.className = `filter-btn${s === 'All' ? ' active' : ''}`;
-  btn.dataset.filter = s;
-  btn.innerHTML = `${SVC_ICON[s] || ''} ${s}`;
-  btn.onclick = () => setFilter(s);
-  filterContainer.appendChild(btn);
-});
+  document.getElementById('total-count').textContent = `${RESOURCES.length} Community Resources`;
 
-// Restore high contrast preference (#10)
-try { if (localStorage.getItem('pbc-hc') === '1') { document.body.classList.add('hc'); document.getElementById('hc-btn').innerHTML = '🌑 Normal Mode'; } } catch(e) {}
+  // Filter buttons with icons (#5)
+  const filterContainer = document.getElementById('filter-buttons');
+  ALL_SERVICES.forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = `filter-btn${s === 'All' ? ' active' : ''}`;
+    btn.dataset.filter = s;
+    btn.innerHTML = `${SVC_ICON[s] || ''} ${s}`;
+    btn.onclick = () => setFilter(s);
+    filterContainer.appendChild(btn);
+  });
 
-initMap();
-renderList();
+  // Restore high contrast preference (#10)
+  try { if (localStorage.getItem('pbc-hc') === '1') { document.body.classList.add('hc'); document.getElementById('hc-btn').innerHTML = '🌑 Normal Mode'; } } catch(e) {}
 
-// ── EVENT DELEGATION for sidebar cards (CSP-safe, no inline onclick) ──
-document.getElementById('resource-list').addEventListener('click', function(e) {
-  // Don't intercept tel: link taps
-  if (e.target.closest('a[href^="tel:"]')) return;
-  const card = e.target.closest('[data-resource-idx]');
-  if (card) {
-    const idx = parseInt(card.getAttribute('data-resource-idx'), 10);
-    selectResource(idx);
-  }
+  // Fix emergency button — reset to default on load
+  emergencyMode = false;
+
+  initMap();
+  renderList();
+
+  // Force Leaflet to recalculate map size after full paint
+  setTimeout(function() { if (map) map.invalidateSize(true); }, 100);
+  setTimeout(function() { if (map) map.invalidateSize(true); }, 500);
+  setTimeout(function() { if (map) map.invalidateSize(true); }, 1500);
+
+  // ── EVENT DELEGATION for sidebar cards (CSP-safe, no inline onclick) ──
+  document.getElementById('resource-list').addEventListener('click', function(e) {
+    if (e.target.closest('a[href^="tel:"]')) return;
+    const card = e.target.closest('[data-resource-idx]');
+    if (card) {
+      const idx = parseInt(card.getAttribute('data-resource-idx'), 10);
+      selectResource(idx);
+    }
+  });
+
 });
 
 // ── PWA SERVICE WORKER (#9) ──
